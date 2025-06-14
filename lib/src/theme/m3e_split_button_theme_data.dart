@@ -16,12 +16,12 @@ class M3ESplitButtonThemeData with Diagnosticable {
       (null, null) => null,
       (null, final b?) => b,
       (final a?, null) => a,
-      (final a?, final b?) => () {
-        if (identical(a, b)) return a;
-        return M3ESplitButtonThemeData(
-          spacing: LerpHelper.lerpDouble(a.spacing, b.spacing, t),
-        );
-      }(),
+      (final a?, final b?) =>
+        identical(a, b)
+            ? a
+            : M3ESplitButtonThemeData(
+              spacing: LerpHelper.lerpDouble(a.spacing, b.spacing, t),
+            ),
     };
   }
 }
