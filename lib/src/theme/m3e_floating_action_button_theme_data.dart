@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
+@immutable
 class M3EFloatingActionButtonThemeData with Diagnosticable {
   const M3EFloatingActionButtonThemeData({this.mediumSizeConstraints});
 
