@@ -32,15 +32,19 @@ class M3EMediumFloatingActionButton extends StatelessWidget {
        assert(highlightElevation == null || highlightElevation >= 0.0),
        assert(disabledElevation == null || disabledElevation >= 0.0);
 
+  /// {@template material_expressive.fab.child}
   /// The widget below this widget in the tree.
   ///
   /// Typically an [Icon].
+  /// {@endtemplate}
   final Widget? child;
 
+  /// {@template material_expressive.fab.tooltip}
   /// Text that describes the action that will occur when the button is pressed.
   ///
   /// This text is displayed when the user long-presses on the button and is
   /// used for accessibility.
+  /// {@endtemplate}
   final String? tooltip;
 
   /// The default foreground color for icons and text within the button.
