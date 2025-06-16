@@ -255,7 +255,7 @@ class M3EExtendedFloatingActionButton extends StatelessWidget {
         this.disabledElevation ??
         floatingActionButtonTheme.disabledElevation ??
         defaults.disabledElevation ??
-        0;
+        elevation;
     final highlightElevation =
         this.highlightElevation ??
         floatingActionButtonTheme.highlightElevation ??
