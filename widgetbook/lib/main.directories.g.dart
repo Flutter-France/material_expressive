@@ -29,7 +29,7 @@ final directories = <_i1.WidgetbookNode>[
             ),
           ),
           _i1.WidgetbookLeafComponent(
-            name: 'M3EMediumFloatingActionButton',
+            name: 'M3EFloatingActionButton',
             useCase: _i1.WidgetbookUseCase(
               name: 'FAB',
               builder: _i2.buildFloatingActionButton,

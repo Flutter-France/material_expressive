@@ -5,14 +5,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:material_expressive/src/theme/m3e_theme.dart';
 
+import 'm3e_floating_action_button.dart';
+
 class _DefaultHeroTag {
   const _DefaultHeroTag();
 
   @override
   String toString() => '<default M3EExtendedFloatingActionButton tag>';
 }
-
-enum _M3EExtendedFloatingActionButtonSize { small, medium, large }
 
 class M3EExtendedFloatingActionButton extends StatelessWidget {
   const M3EExtendedFloatingActionButton.small({
@@ -47,7 +47,7 @@ class M3EExtendedFloatingActionButton extends StatelessWidget {
        assert(hoverElevation == null || hoverElevation >= 0.0),
        assert(highlightElevation == null || highlightElevation >= 0.0),
        assert(disabledElevation == null || disabledElevation >= 0.0),
-       _floatingActionButtonType = _M3EExtendedFloatingActionButtonSize.small;
+       _floatingActionButtonType = M3EFloatingActionButtonType.small;
 
   const M3EExtendedFloatingActionButton.medium({
     super.key,
@@ -81,7 +81,7 @@ class M3EExtendedFloatingActionButton extends StatelessWidget {
        assert(hoverElevation == null || hoverElevation >= 0.0),
        assert(highlightElevation == null || highlightElevation >= 0.0),
        assert(disabledElevation == null || disabledElevation >= 0.0),
-       _floatingActionButtonType = _M3EExtendedFloatingActionButtonSize.medium;
+       _floatingActionButtonType = M3EFloatingActionButtonType.medium;
 
   const M3EExtendedFloatingActionButton.large({
     super.key,
@@ -115,7 +115,7 @@ class M3EExtendedFloatingActionButton extends StatelessWidget {
        assert(hoverElevation == null || hoverElevation >= 0.0),
        assert(highlightElevation == null || highlightElevation >= 0.0),
        assert(disabledElevation == null || disabledElevation >= 0.0),
-       _floatingActionButtonType = _M3EExtendedFloatingActionButtonSize.large;
+       _floatingActionButtonType = M3EFloatingActionButtonType.large;
 
   /// {@macro material_expressive.fab.tooltip}
   final String? tooltip;
@@ -204,7 +204,7 @@ class M3EExtendedFloatingActionButton extends StatelessWidget {
   /// {@macro material_expressive.fab.enable_feedback}
   final bool? enableFeedback;
 
-  final _M3EExtendedFloatingActionButtonSize _floatingActionButtonType;
+  final M3EFloatingActionButtonType _floatingActionButtonType;
 
   @override
   Widget build(BuildContext context) {
@@ -299,13 +299,13 @@ class M3EExtendedFloatingActionButton extends StatelessWidget {
     );
 
     final sizeConstraints = switch (_floatingActionButtonType) {
-      _M3EExtendedFloatingActionButtonSize.small =>
+      M3EFloatingActionButtonType.small =>
         m3eFabTheme?.extendedSmallSizeConstraints ??
             defaults.extendedSmallSizeConstraints,
-      _M3EExtendedFloatingActionButtonSize.medium =>
+      M3EFloatingActionButtonType.medium =>
         m3eFabTheme?.extendedMediumSizeConstraints ??
             defaults.extendedMediumSizeConstraints,
-      _M3EExtendedFloatingActionButtonSize.large =>
+      M3EFloatingActionButtonType.large =>
         m3eFabTheme?.extendedLargeSizeConstraints ??
             defaults.extendedLargeSizeConstraints,
     };
@@ -519,7 +519,7 @@ class _ExtendedFABDefaultsM3E extends FloatingActionButtonThemeData {
       );
 
   final BuildContext context;
-  final _M3EExtendedFloatingActionButtonSize type;
+  final M3EFloatingActionButtonType type;
   final BoxConstraints extendedSmallSizeConstraints;
   final BoxConstraints extendedMediumSizeConstraints;
   final BoxConstraints extendedLargeSizeConstraints;
@@ -543,45 +543,51 @@ class _ExtendedFABDefaultsM3E extends FloatingActionButtonThemeData {
 
   @override
   ShapeBorder get shape => switch (type) {
-    _M3EExtendedFloatingActionButtonSize.small => const RoundedRectangleBorder(
+    M3EFloatingActionButtonType.small => const RoundedRectangleBorder(
       borderRadius: BorderRadius.all(Radius.circular(16.0)),
     ),
-    _M3EExtendedFloatingActionButtonSize.medium => const RoundedRectangleBorder(
+    M3EFloatingActionButtonType.medium => const RoundedRectangleBorder(
       borderRadius: BorderRadius.all(Radius.circular(20.0)),
     ),
-    _M3EExtendedFloatingActionButtonSize.large => const RoundedRectangleBorder(
+    M3EFloatingActionButtonType.large => const RoundedRectangleBorder(
       borderRadius: BorderRadius.all(Radius.circular(28.0)),
     ),
   };
 
   @override
   double get iconSize => switch (type) {
-    _M3EExtendedFloatingActionButtonSize.small => 24.0,
-    _M3EExtendedFloatingActionButtonSize.medium => 28.0,
-    _M3EExtendedFloatingActionButtonSize.large => 36.0,
+    M3EFloatingActionButtonType.small => 24.0,
+    M3EFloatingActionButtonType.medium => 28.0,
+    M3EFloatingActionButtonType.large => 36.0,
   };
 
   @override
   double get extendedIconLabelSpacing => switch (type) {
-    _M3EExtendedFloatingActionButtonSize.small => 8.0,
-    _M3EExtendedFloatingActionButtonSize.medium => 12.0,
-    _M3EExtendedFloatingActionButtonSize.large => 16.0,
+    M3EFloatingActionButtonType.small => 8.0,
+    M3EFloatingActionButtonType.medium => 12.0,
+    M3EFloatingActionButtonType.large => 16.0,
   };
 
   @override
   EdgeInsetsGeometry get extendedPadding => switch (type) {
-    _M3EExtendedFloatingActionButtonSize.small =>
-      EdgeInsetsDirectional.symmetric(horizontal: 16.0, vertical: 16.0),
-    _M3EExtendedFloatingActionButtonSize.medium =>
-      EdgeInsetsDirectional.symmetric(horizontal: 26.0, vertical: 26.0),
-    _M3EExtendedFloatingActionButtonSize.large =>
-      EdgeInsetsDirectional.symmetric(horizontal: 28.0, vertical: 30.0),
+    M3EFloatingActionButtonType.small => EdgeInsetsDirectional.symmetric(
+      horizontal: 16.0,
+      vertical: 16.0,
+    ),
+    M3EFloatingActionButtonType.medium => EdgeInsetsDirectional.symmetric(
+      horizontal: 26.0,
+      vertical: 26.0,
+    ),
+    M3EFloatingActionButtonType.large => EdgeInsetsDirectional.symmetric(
+      horizontal: 28.0,
+      vertical: 30.0,
+    ),
   };
 
   @override
   TextStyle? get extendedTextStyle => switch (type) {
-    _M3EExtendedFloatingActionButtonSize.small => _textTheme.titleMedium,
-    _M3EExtendedFloatingActionButtonSize.medium => _textTheme.titleLarge,
-    _M3EExtendedFloatingActionButtonSize.large => _textTheme.headlineSmall,
+    M3EFloatingActionButtonType.small => _textTheme.titleMedium,
+    M3EFloatingActionButtonType.medium => _textTheme.titleLarge,
+    M3EFloatingActionButtonType.large => _textTheme.headlineSmall,
   };
 }

@@ -12,6 +12,20 @@ class M3ETheme extends ThemeExtension<M3ETheme> {
   final M3EFloatingActionButtonThemeData? floatingActionButtonTheme;
   final M3ESplitButtonThemeData? splitButtonTheme;
 
+  static M3ETheme? maybeOf(BuildContext context) {
+    return Theme.of(context).extension<M3ETheme>();
+  }
+
+  static M3ETheme of(BuildContext context) {
+    final theme = maybeOf(context);
+    if (theme == null) {
+      throw FlutterError(
+        'M3ETheme.of() called with a context that does not contain a M3ETheme.',
+      );
+    }
+    return theme;
+  }
+
   @override
   M3ETheme copyWith({
     M3EFloatingActionButtonThemeData? floatingActionButtonTheme,

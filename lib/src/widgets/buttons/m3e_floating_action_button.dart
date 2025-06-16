@@ -1,8 +1,41 @@
 import 'package:flutter/material.dart';
 import 'package:material_expressive/src/theme/m3e_theme.dart';
+import 'package:material_expressive/src/theme/motion_scheme.dart';
 
-class M3EMediumFloatingActionButton extends StatelessWidget {
-  const M3EMediumFloatingActionButton({
+enum M3EFloatingActionButtonType { small, medium, large }
+
+class M3EFloatingActionButton extends StatefulWidget {
+  const M3EFloatingActionButton({
+    super.key,
+    this.child,
+    this.tooltip,
+    this.foregroundColor,
+    this.backgroundColor,
+    this.focusColor,
+    this.hoverColor,
+    this.splashColor,
+    this.heroTag,
+    this.elevation,
+    this.focusElevation,
+    this.hoverElevation,
+    this.highlightElevation,
+    this.disabledElevation,
+    required this.onPressed,
+    this.mouseCursor,
+    this.shape,
+    this.clipBehavior = Clip.none,
+    this.focusNode,
+    this.autofocus = false,
+    this.materialTapTargetSize,
+    this.enableFeedback,
+    this.floatingActionButtonType = M3EFloatingActionButtonType.small,
+  }) : assert(elevation == null || elevation >= 0.0),
+       assert(focusElevation == null || focusElevation >= 0.0),
+       assert(hoverElevation == null || hoverElevation >= 0.0),
+       assert(highlightElevation == null || highlightElevation >= 0.0),
+       assert(disabledElevation == null || disabledElevation >= 0.0);
+
+  const M3EFloatingActionButton.small({
     super.key,
     this.child,
     this.tooltip,
@@ -29,7 +62,68 @@ class M3EMediumFloatingActionButton extends StatelessWidget {
        assert(focusElevation == null || focusElevation >= 0.0),
        assert(hoverElevation == null || hoverElevation >= 0.0),
        assert(highlightElevation == null || highlightElevation >= 0.0),
-       assert(disabledElevation == null || disabledElevation >= 0.0);
+       assert(disabledElevation == null || disabledElevation >= 0.0),
+       floatingActionButtonType = M3EFloatingActionButtonType.small;
+
+  const M3EFloatingActionButton.medium({
+    super.key,
+    this.child,
+    this.tooltip,
+    this.foregroundColor,
+    this.backgroundColor,
+    this.focusColor,
+    this.hoverColor,
+    this.splashColor,
+    this.heroTag,
+    this.elevation,
+    this.focusElevation,
+    this.hoverElevation,
+    this.highlightElevation,
+    this.disabledElevation,
+    required this.onPressed,
+    this.mouseCursor,
+    this.shape,
+    this.clipBehavior = Clip.none,
+    this.focusNode,
+    this.autofocus = false,
+    this.materialTapTargetSize,
+    this.enableFeedback,
+  }) : assert(elevation == null || elevation >= 0.0),
+       assert(focusElevation == null || focusElevation >= 0.0),
+       assert(hoverElevation == null || hoverElevation >= 0.0),
+       assert(highlightElevation == null || highlightElevation >= 0.0),
+       assert(disabledElevation == null || disabledElevation >= 0.0),
+       floatingActionButtonType = M3EFloatingActionButtonType.medium;
+
+  const M3EFloatingActionButton.large({
+    super.key,
+    this.child,
+    this.tooltip,
+    this.foregroundColor,
+    this.backgroundColor,
+    this.focusColor,
+    this.hoverColor,
+    this.splashColor,
+    this.heroTag,
+    this.elevation,
+    this.focusElevation,
+    this.hoverElevation,
+    this.highlightElevation,
+    this.disabledElevation,
+    required this.onPressed,
+    this.mouseCursor,
+    this.shape,
+    this.clipBehavior = Clip.none,
+    this.focusNode,
+    this.autofocus = false,
+    this.materialTapTargetSize,
+    this.enableFeedback,
+  }) : assert(elevation == null || elevation >= 0.0),
+       assert(focusElevation == null || focusElevation >= 0.0),
+       assert(hoverElevation == null || hoverElevation >= 0.0),
+       assert(highlightElevation == null || highlightElevation >= 0.0),
+       assert(disabledElevation == null || disabledElevation >= 0.0),
+       floatingActionButtonType = M3EFloatingActionButtonType.large;
 
   /// {@template material_expressive.fab.child}
   /// The widget below this widget in the tree.
@@ -86,7 +180,7 @@ class M3EMediumFloatingActionButton extends StatelessWidget {
   final Color? hoverColor;
 
   /// {@template material_expressive.fab.splash_color}
-  /// The splash color for this [M3EMediumFloatingActionButton]'s [InkWell].
+  /// The splash color for this [M3EFloatingActionButton]'s [InkWell].
   ///
   /// If null, [FloatingActionButtonThemeData.splashColor] is used, if that is
   /// null, [ThemeData.splashColor] is used in Material 2; [ColorScheme.onPrimaryContainer]
@@ -103,7 +197,7 @@ class M3EMediumFloatingActionButton extends StatelessWidget {
   /// have a hero tag.
   ///
   /// If this is not explicitly set, then there can only be one
-  /// [M3EMediumFloatingActionButton] per route (that is, per screen), since otherwise
+  /// [M3EFloatingActionButton] per route (that is, per screen), since otherwise
   /// there would be a tag conflict (multiple heroes on one route can't have the
   /// same tag). The Material Design specification recommends only using one
   /// floating action button per screen.
@@ -257,61 +351,132 @@ class M3EMediumFloatingActionButton extends StatelessWidget {
   /// {@endtemplate}
   final bool? enableFeedback;
 
+  final M3EFloatingActionButtonType floatingActionButtonType;
+
+  @override
+  State<M3EFloatingActionButton> createState() =>
+      _M3EFloatingActionButtonState();
+}
+
+class _M3EFloatingActionButtonState extends State<M3EFloatingActionButton>
+    with TickerProviderStateMixin {
+  late AnimationController controller;
+  late Animation<double> fabScaleAnimation;
+
+  bool controllerInitialized = false;
+
+  @override
+  void initState() {
+    super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      controller.forward();
+    });
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    final m3eTheme = M3ETheme.maybeOf(context);
+    final motion = m3eTheme?.motionScheme ?? const M3EMotionScheme();
+    final spec = motion.defaultSpatialSpec;
+
+    if (!controllerInitialized) {
+      controller = AnimationController(vsync: this, duration: spec.duration);
+      controllerInitialized = true;
+
+      fabScaleAnimation = CurvedAnimation(
+        parent: controller,
+        curve: spec.curve,
+      );
+    }
+  }
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final floatingActionButtonTheme = theme.floatingActionButtonTheme;
     final m3eFabTheme = theme.extension<M3ETheme>()?.floatingActionButtonTheme;
-    const defaults = _MediumFABDefaultsM3E();
+    final defaults = _MediumFABDefaultsM3E(widget.floatingActionButtonType);
 
     final iconSize = floatingActionButtonTheme.iconSize ?? defaults.iconSize;
     final shape =
-        this.shape ?? floatingActionButtonTheme.shape ?? defaults.shape;
-    final sizeConstraints =
-        m3eFabTheme?.mediumSizeConstraints ?? defaults.mediumSizeConstraints;
+        widget.shape ?? floatingActionButtonTheme.shape ?? defaults.shape;
+    final sizeConstraints = switch (widget.floatingActionButtonType) {
+      M3EFloatingActionButtonType.small =>
+        floatingActionButtonTheme.smallSizeConstraints ??
+            defaults.smallSizeConstraints,
+      M3EFloatingActionButtonType.medium =>
+        m3eFabTheme?.mediumSizeConstraints ?? defaults.mediumSizeConstraints,
+      M3EFloatingActionButtonType.large =>
+        floatingActionButtonTheme.largeSizeConstraints ??
+            defaults.largeSizeConstraints,
+    };
 
-    return Theme(
-      data: theme.copyWith(
-        floatingActionButtonTheme: floatingActionButtonTheme.copyWith(
-          sizeConstraints: sizeConstraints,
-          iconSize: iconSize,
+    return ScaleTransition(
+      scale: fabScaleAnimation,
+      alignment: Alignment.center,
+      child: Theme(
+        data: theme.copyWith(
+          floatingActionButtonTheme: floatingActionButtonTheme.copyWith(
+            sizeConstraints: sizeConstraints,
+            iconSize: iconSize,
+          ),
         ),
-      ),
-      child: FloatingActionButton(
-        child: child,
-        tooltip: tooltip,
-        foregroundColor: foregroundColor,
-        backgroundColor: backgroundColor,
-        focusColor: focusColor,
-        hoverColor: hoverColor,
-        splashColor: splashColor,
-        heroTag: heroTag,
-        elevation: elevation,
-        focusElevation: focusElevation,
-        hoverElevation: hoverElevation,
-        highlightElevation: highlightElevation,
-        disabledElevation: disabledElevation,
-        onPressed: onPressed,
-        mouseCursor: mouseCursor,
-        shape: shape,
-        clipBehavior: clipBehavior,
-        focusNode: focusNode,
-        autofocus: autofocus,
-        materialTapTargetSize: materialTapTargetSize,
-        enableFeedback: enableFeedback,
+        child: FloatingActionButton(
+          child: widget.child,
+          tooltip: widget.tooltip,
+          foregroundColor: widget.foregroundColor,
+          backgroundColor: widget.backgroundColor,
+          focusColor: widget.focusColor,
+          hoverColor: widget.hoverColor,
+          splashColor: widget.splashColor,
+          heroTag: widget.heroTag,
+          elevation: widget.elevation,
+          focusElevation: widget.focusElevation,
+          hoverElevation: widget.hoverElevation,
+          highlightElevation: widget.highlightElevation,
+          disabledElevation: widget.disabledElevation,
+          onPressed: widget.onPressed,
+          mouseCursor: widget.mouseCursor,
+          shape: shape,
+          clipBehavior: widget.clipBehavior,
+          focusNode: widget.focusNode,
+          autofocus: widget.autofocus,
+          materialTapTargetSize: widget.materialTapTargetSize,
+          enableFeedback: widget.enableFeedback,
+        ),
       ),
     );
   }
 }
 
 class _MediumFABDefaultsM3E extends FloatingActionButtonThemeData {
-  const _MediumFABDefaultsM3E()
+  const _MediumFABDefaultsM3E(this.type)
     : mediumSizeConstraints = const BoxConstraints.tightFor(
         width: 80.0,
         height: 80.0,
+      ),
+      super(
+        smallSizeConstraints: const BoxConstraints.tightFor(
+          width: 56.0,
+          height: 56.0,
+        ),
+        largeSizeConstraints: const BoxConstraints.tightFor(
+          width: 96.0,
+          height: 96.0,
+        ),
       );
 
   final BoxConstraints mediumSizeConstraints;
+  final M3EFloatingActionButtonType type;
 
   @override
   ShapeBorder get shape => const RoundedRectangleBorder(
@@ -319,5 +484,9 @@ class _MediumFABDefaultsM3E extends FloatingActionButtonThemeData {
   );
 
   @override
-  double get iconSize => 28.0;
+  double get iconSize => switch (type) {
+    M3EFloatingActionButtonType.small => 24.0,
+    M3EFloatingActionButtonType.medium => 28.0,
+    M3EFloatingActionButtonType.large => 36.0,
+  };
 }
