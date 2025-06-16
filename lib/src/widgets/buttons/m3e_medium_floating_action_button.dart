@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:material_expressive/src/theme/m3e_theme.dart';
-import 'package:material_expressive/src/utils/debug_check_has_expressive_material.dart';
 
 class M3EMediumFloatingActionButton extends StatelessWidget {
   const M3EMediumFloatingActionButton({
@@ -260,8 +259,6 @@ class M3EMediumFloatingActionButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    debugCheckHasExpressiveMaterial(context);
-
     final theme = Theme.of(context);
     final floatingActionButtonTheme = theme.floatingActionButtonTheme;
     final m3eFabTheme = theme.extension<M3ETheme>()?.floatingActionButtonTheme;
