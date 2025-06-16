@@ -22,10 +22,17 @@ final directories = <_i1.WidgetbookNode>[
         name: 'buttons',
         children: [
           _i1.WidgetbookLeafComponent(
+            name: 'M3EExtendedFloatingActionButton',
+            useCase: _i1.WidgetbookUseCase(
+              name: 'Extended FAB',
+              builder: _i2.buildExtendedFloatingActionButton,
+            ),
+          ),
+          _i1.WidgetbookLeafComponent(
             name: 'M3EMediumFloatingActionButton',
             useCase: _i1.WidgetbookUseCase(
-              name: 'Medium',
-              builder: _i2.buildSecondaryFloatingActionButton,
+              name: 'FAB',
+              builder: _i2.buildFloatingActionButton,
             ),
           ),
         ],

@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:material_expressive/src/theme/m3e_theme.dart';
 import 'package:material_expressive/src/utils/debug_check_has_expressive_material.dart';
@@ -303,71 +302,6 @@ class M3EMediumFloatingActionButton extends StatelessWidget {
         autofocus: autofocus,
         materialTapTargetSize: materialTapTargetSize,
         enableFeedback: enableFeedback,
-      ),
-    );
-  }
-
-  @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    properties.add(
-      ObjectFlagProperty<VoidCallback>(
-        'onPressed',
-        onPressed,
-        ifNull: 'disabled',
-      ),
-    );
-    properties.add(StringProperty('tooltip', tooltip, defaultValue: null));
-    properties.add(
-      ColorProperty('foregroundColor', foregroundColor, defaultValue: null),
-    );
-    properties.add(
-      ColorProperty('backgroundColor', backgroundColor, defaultValue: null),
-    );
-    properties.add(ColorProperty('focusColor', focusColor, defaultValue: null));
-    properties.add(ColorProperty('hoverColor', hoverColor, defaultValue: null));
-    properties.add(
-      ColorProperty('splashColor', splashColor, defaultValue: null),
-    );
-    properties.add(
-      ObjectFlagProperty<Object>('heroTag', heroTag, ifPresent: 'hero'),
-    );
-    properties.add(DoubleProperty('elevation', elevation, defaultValue: null));
-    properties.add(
-      DoubleProperty('focusElevation', focusElevation, defaultValue: null),
-    );
-    properties.add(
-      DoubleProperty('hoverElevation', hoverElevation, defaultValue: null),
-    );
-    properties.add(
-      DoubleProperty(
-        'highlightElevation',
-        highlightElevation,
-        defaultValue: null,
-      ),
-    );
-    properties.add(
-      DoubleProperty(
-        'disabledElevation',
-        disabledElevation,
-        defaultValue: null,
-      ),
-    );
-    properties.add(
-      DiagnosticsProperty<ShapeBorder>('shape', shape, defaultValue: null),
-    );
-    properties.add(
-      DiagnosticsProperty<FocusNode>(
-        'focusNode',
-        focusNode,
-        defaultValue: null,
-      ),
-    );
-    properties.add(
-      DiagnosticsProperty<MaterialTapTargetSize>(
-        'materialTapTargetSize',
-        materialTapTargetSize,
-        defaultValue: null,
       ),
     );
   }

@@ -3,18 +3,14 @@ import 'package:material_expressive/material_expressive.dart';
 import 'package:widgetbook/widgetbook.dart';
 import 'package:widgetbook_annotation/widgetbook_annotation.dart' as widgetbook;
 
-@widgetbook.UseCase(name: 'Medium', type: M3EMediumFloatingActionButton)
-Widget buildSecondaryFloatingActionButton(BuildContext context) {
-  final enabled = context.knobs.boolean(
-    label: 'Enabled',
-    description: 'Whether the button is enabled or not',
-    initialValue: true,
-  );
+@widgetbook.UseCase(name: 'FAB', type: M3EMediumFloatingActionButton)
+Widget buildFloatingActionButton(BuildContext context) {
+  final enabled = context.knobs.boolean(label: 'Enabled', initialValue: true);
 
   final style = context.knobs.list<_FABStyle>(
     label: 'Style',
     options: _FABStyle.values,
-    labelBuilder: (s) => s.name,
+    labelBuilder: (s) => s.label,
   );
 
   return M3EMediumFloatingActionButton(
@@ -24,7 +20,62 @@ Widget buildSecondaryFloatingActionButton(BuildContext context) {
   );
 }
 
+@widgetbook.UseCase(name: 'Extended FAB', type: M3EExtendedFloatingActionButton)
+Widget buildExtendedFloatingActionButton(BuildContext context) {
+  final size = context.knobs.list<_FABSize>(
+    label: 'Size',
+    options: _FABSize.values,
+    labelBuilder: (s) => s.label,
+  );
+
+  final enabled = context.knobs.boolean(label: 'Enabled', initialValue: true);
+
+  final style = context.knobs.list<_FABStyle>(
+    label: 'Style',
+    options: _FABStyle.values,
+    labelBuilder: (s) => s.label,
+  );
+
+  final onPressed = enabled ? () {} : null;
+  const icon = Icon(Icons.stars);
+  const label = Text('Label');
+
+  return switch (size) {
+    _FABSize.small => M3EExtendedFloatingActionButton.small(
+      onPressed: onPressed,
+      backgroundColor: style.backgroundColor(context),
+      foregroundColor: style.foregroundColor(context),
+      icon: icon,
+      label: label,
+    ),
+    _FABSize.medium => M3EExtendedFloatingActionButton.medium(
+      onPressed: onPressed,
+      backgroundColor: style.backgroundColor(context),
+      foregroundColor: style.foregroundColor(context),
+      icon: icon,
+      label: label,
+    ),
+    _FABSize.large => M3EExtendedFloatingActionButton.large(
+      onPressed: onPressed,
+      backgroundColor: style.backgroundColor(context),
+      foregroundColor: style.foregroundColor(context),
+      icon: icon,
+      label: label,
+    ),
+  };
+}
+
 typedef _ColorFetcher = Color Function(BuildContext context);
+
+enum _FABSize {
+  small('Small'),
+  medium('Medium'),
+  large('Large');
+
+  const _FABSize(this.label);
+
+  final String label;
+}
 
 enum _FABStyle {
   primaryContainer(
