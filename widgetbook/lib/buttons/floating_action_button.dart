@@ -52,30 +52,14 @@ Widget buildExtendedFloatingActionButton(BuildContext context) {
 
   final (:backColor, :onColor) = style.colorFetcher(theme);
 
-  return switch (size) {
-    M3EFloatingActionButtonType.small => M3EExtendedFloatingActionButton.small(
-      onPressed: onPressed,
-      backgroundColor: backColor,
-      foregroundColor: onColor,
-      icon: icon,
-      label: label,
-    ),
-    M3EFloatingActionButtonType.medium =>
-      M3EExtendedFloatingActionButton.medium(
-        onPressed: onPressed,
-        backgroundColor: backColor,
-        foregroundColor: onColor,
-        icon: icon,
-        label: label,
-      ),
-    M3EFloatingActionButtonType.large => M3EExtendedFloatingActionButton.large(
-      onPressed: onPressed,
-      backgroundColor: backColor,
-      foregroundColor: onColor,
-      icon: icon,
-      label: label,
-    ),
-  };
+  return M3EExtendedFloatingActionButton(
+    onPressed: onPressed,
+    backgroundColor: backColor,
+    foregroundColor: onColor,
+    icon: icon,
+    label: label,
+    floatingActionButtonType: size,
+  );
 }
 
 typedef _ColorRecord = ({Color backColor, Color onColor});

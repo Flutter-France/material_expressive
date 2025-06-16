@@ -15,6 +15,40 @@ class _DefaultHeroTag {
 }
 
 class M3EExtendedFloatingActionButton extends StatelessWidget {
+  const M3EExtendedFloatingActionButton({
+    super.key,
+    this.tooltip,
+    this.foregroundColor,
+    this.backgroundColor,
+    this.focusColor,
+    this.hoverColor,
+    this.heroTag = const _DefaultHeroTag(),
+    this.elevation,
+    this.focusElevation,
+    this.hoverElevation,
+    this.splashColor,
+    this.highlightElevation,
+    this.disabledElevation,
+    required this.onPressed,
+    this.mouseCursor = SystemMouseCursors.click,
+    this.shape,
+    this.materialTapTargetSize,
+    this.clipBehavior = Clip.none,
+    this.focusNode,
+    this.autofocus = false,
+    this.iconLabelSpacing,
+    this.padding,
+    this.textStyle,
+    this.icon,
+    required this.label,
+    this.enableFeedback,
+    this.floatingActionButtonType = M3EFloatingActionButtonType.medium,
+  }) : assert(elevation == null || elevation >= 0.0),
+       assert(focusElevation == null || focusElevation >= 0.0),
+       assert(hoverElevation == null || hoverElevation >= 0.0),
+       assert(highlightElevation == null || highlightElevation >= 0.0),
+       assert(disabledElevation == null || disabledElevation >= 0.0);
+
   const M3EExtendedFloatingActionButton.small({
     super.key,
     this.tooltip,
@@ -47,7 +81,7 @@ class M3EExtendedFloatingActionButton extends StatelessWidget {
        assert(hoverElevation == null || hoverElevation >= 0.0),
        assert(highlightElevation == null || highlightElevation >= 0.0),
        assert(disabledElevation == null || disabledElevation >= 0.0),
-       _floatingActionButtonType = M3EFloatingActionButtonType.small;
+       floatingActionButtonType = M3EFloatingActionButtonType.small;
 
   const M3EExtendedFloatingActionButton.medium({
     super.key,
@@ -81,7 +115,7 @@ class M3EExtendedFloatingActionButton extends StatelessWidget {
        assert(hoverElevation == null || hoverElevation >= 0.0),
        assert(highlightElevation == null || highlightElevation >= 0.0),
        assert(disabledElevation == null || disabledElevation >= 0.0),
-       _floatingActionButtonType = M3EFloatingActionButtonType.medium;
+       floatingActionButtonType = M3EFloatingActionButtonType.medium;
 
   const M3EExtendedFloatingActionButton.large({
     super.key,
@@ -115,7 +149,7 @@ class M3EExtendedFloatingActionButton extends StatelessWidget {
        assert(hoverElevation == null || hoverElevation >= 0.0),
        assert(highlightElevation == null || highlightElevation >= 0.0),
        assert(disabledElevation == null || disabledElevation >= 0.0),
-       _floatingActionButtonType = M3EFloatingActionButtonType.large;
+       floatingActionButtonType = M3EFloatingActionButtonType.large;
 
   /// {@macro material_expressive.fab.tooltip}
   final String? tooltip;
@@ -204,17 +238,14 @@ class M3EExtendedFloatingActionButton extends StatelessWidget {
   /// {@macro material_expressive.fab.enable_feedback}
   final bool? enableFeedback;
 
-  final M3EFloatingActionButtonType _floatingActionButtonType;
+  final M3EFloatingActionButtonType floatingActionButtonType;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final floatingActionButtonTheme = theme.floatingActionButtonTheme;
     final m3eFabTheme = theme.extension<M3ETheme>()?.floatingActionButtonTheme;
-    final defaults = _ExtendedFABDefaultsM3E(
-      context,
-      _floatingActionButtonType,
-    );
+    final defaults = _ExtendedFABDefaultsM3E(context, floatingActionButtonType);
 
     final foregroundColor =
         this.foregroundColor ??
@@ -298,7 +329,7 @@ class M3EExtendedFloatingActionButton extends StatelessWidget {
       ),
     );
 
-    final sizeConstraints = switch (_floatingActionButtonType) {
+    final sizeConstraints = switch (floatingActionButtonType) {
       M3EFloatingActionButtonType.small =>
         m3eFabTheme?.extendedSmallSizeConstraints ??
             defaults.extendedSmallSizeConstraints,
