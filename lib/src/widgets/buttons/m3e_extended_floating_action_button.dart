@@ -7,8 +7,10 @@ class _DefaultHeroTag {
   String toString() => '<default M3EExtendedFloatingActionButton tag>';
 }
 
+enum _M3EExtendedFloatingActionButtonSize { small, medium, large }
+
 class M3EExtendedFloatingActionButton extends StatelessWidget {
-  const M3EExtendedFloatingActionButton({
+  const M3EExtendedFloatingActionButton.small({
     super.key,
     this.tooltip,
     this.foregroundColor,
@@ -40,7 +42,7 @@ class M3EExtendedFloatingActionButton extends StatelessWidget {
        assert(hoverElevation == null || hoverElevation >= 0.0),
        assert(highlightElevation == null || highlightElevation >= 0.0),
        assert(disabledElevation == null || disabledElevation >= 0.0),
-       _floatingActionButtonType = _M3EExtendedFloatingActionButtonSize.regular;
+       _floatingActionButtonType = _M3EExtendedFloatingActionButtonSize.small;
 
   const M3EExtendedFloatingActionButton.medium({
     super.key,
@@ -205,4 +207,79 @@ class M3EExtendedFloatingActionButton extends StatelessWidget {
   }
 }
 
-enum _M3EExtendedFloatingActionButtonSize { regular, medium, large }
+class _ExtendedFABDefaultsM3E extends FloatingActionButtonThemeData {
+  _ExtendedFABDefaultsM3E(this.context, this.type, this.hasChild)
+    : super(
+        elevation: 6.0,
+        focusElevation: 6.0,
+        hoverElevation: 8.0,
+        highlightElevation: 6.0,
+        enableFeedback: true,
+        sizeConstraints: const BoxConstraints.tightFor(
+          width: 56.0,
+          height: 56.0,
+        ),
+        smallSizeConstraints: const BoxConstraints.tightFor(
+          width: 40.0,
+          height: 40.0,
+        ),
+        largeSizeConstraints: const BoxConstraints.tightFor(
+          width: 96.0,
+          height: 96.0,
+        ),
+        extendedSizeConstraints: const BoxConstraints.tightFor(height: 56.0),
+        extendedIconLabelSpacing: 8.0,
+      );
+
+  final BuildContext context;
+  final _M3EExtendedFloatingActionButtonSize type;
+  final bool hasChild;
+  late final ColorScheme _colors = Theme.of(context).colorScheme;
+  late final TextTheme _textTheme = Theme.of(context).textTheme;
+
+  @override
+  Color? get foregroundColor => _colors.onPrimaryContainer;
+
+  @override
+  Color? get backgroundColor => _colors.primaryContainer;
+
+  @override
+  Color? get splashColor => _colors.onPrimaryContainer.withValues(alpha: .1);
+
+  @override
+  Color? get focusColor => _colors.onPrimaryContainer.withValues(alpha: .1);
+
+  @override
+  Color? get hoverColor => _colors.onPrimaryContainer.withValues(alpha: .08);
+
+  @override
+  ShapeBorder? get shape => switch (type) {
+    _M3EExtendedFloatingActionButtonSize.small => const RoundedRectangleBorder(
+      borderRadius: BorderRadius.all(Radius.circular(16.0)),
+    ),
+    _M3EExtendedFloatingActionButtonSize.medium => const RoundedRectangleBorder(
+      borderRadius: BorderRadius.all(Radius.circular(20.0)),
+    ),
+    _M3EExtendedFloatingActionButtonSize.large => const RoundedRectangleBorder(
+      borderRadius: BorderRadius.all(Radius.circular(28.0)),
+    ),
+  };
+
+  @override
+  double? get iconSize => switch (type) {
+    _M3EExtendedFloatingActionButtonSize.small => 24.0,
+    _M3EExtendedFloatingActionButtonSize.medium => 28.0,
+    _M3EExtendedFloatingActionButtonSize.large => 36.0,
+  };
+
+  @override
+  EdgeInsetsGeometry? get extendedPadding =>
+      EdgeInsetsDirectional.only(start: hasChild ? 16.0 : 20.0, end: 20.0);
+
+  @override
+  TextStyle? get extendedTextStyle => switch (type) {
+    _M3EExtendedFloatingActionButtonSize.small => _textTheme.titleMedium,
+    _M3EExtendedFloatingActionButtonSize.medium => _textTheme.titleLarge,
+    _M3EExtendedFloatingActionButtonSize.large => _textTheme.headlineSmall,
+  };
+}
