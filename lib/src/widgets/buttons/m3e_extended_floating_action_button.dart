@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:material_expressive/src/theme/m3e_theme.dart';
+import 'package:material_expressive/src/utils/debug_check_has_expressive_material.dart';
 
 import 'm3e_floating_action_button.dart';
 
@@ -14,7 +15,7 @@ class _DefaultHeroTag {
   String toString() => '<default M3EExtendedFloatingActionButton tag>';
 }
 
-class M3EExtendedFloatingActionButton extends StatelessWidget {
+class M3EExtendedFloatingActionButton extends StatefulWidget {
   const M3EExtendedFloatingActionButton({
     super.key,
     this.tooltip,
@@ -42,6 +43,7 @@ class M3EExtendedFloatingActionButton extends StatelessWidget {
     this.icon,
     required this.label,
     this.enableFeedback,
+    this.scrollController,
     this.floatingActionButtonType = M3EFloatingActionButtonType.medium,
   }) : assert(elevation == null || elevation >= 0.0),
        assert(focusElevation == null || focusElevation >= 0.0),
@@ -76,6 +78,7 @@ class M3EExtendedFloatingActionButton extends StatelessWidget {
     this.icon,
     required this.label,
     this.enableFeedback,
+    this.scrollController,
   }) : assert(elevation == null || elevation >= 0.0),
        assert(focusElevation == null || focusElevation >= 0.0),
        assert(hoverElevation == null || hoverElevation >= 0.0),
@@ -110,6 +113,7 @@ class M3EExtendedFloatingActionButton extends StatelessWidget {
     this.icon,
     required this.label,
     this.enableFeedback,
+    this.scrollController,
   }) : assert(elevation == null || elevation >= 0.0),
        assert(focusElevation == null || focusElevation >= 0.0),
        assert(hoverElevation == null || hoverElevation >= 0.0),
@@ -144,6 +148,7 @@ class M3EExtendedFloatingActionButton extends StatelessWidget {
     this.icon,
     required this.label,
     this.enableFeedback,
+    this.scrollController,
   }) : assert(elevation == null || elevation >= 0.0),
        assert(focusElevation == null || focusElevation >= 0.0),
        assert(hoverElevation == null || hoverElevation >= 0.0),
@@ -238,78 +243,137 @@ class M3EExtendedFloatingActionButton extends StatelessWidget {
   /// {@macro material_expressive.fab.enable_feedback}
   final bool? enableFeedback;
 
+  /// If specified, the label will be hidden when scrolling down, and shown
+  /// when scrolling up.
+  final ScrollController? scrollController;
+
   final M3EFloatingActionButtonType floatingActionButtonType;
 
   @override
+  State<M3EExtendedFloatingActionButton> createState() =>
+      _M3EExtendedFloatingActionButtonState();
+}
+
+class _M3EExtendedFloatingActionButtonState
+    extends State<M3EExtendedFloatingActionButton>
+    with TickerProviderStateMixin {
+  bool showLabel = true;
+
+  void scrollControllerListener() {
+    if (widget.scrollController case final controller?) {
+      if (!controller.hasClients) return;
+
+      final position = controller.position;
+      final isScrollingDown =
+          position.userScrollDirection == ScrollDirection.reverse;
+      if (isScrollingDown && showLabel) {
+        setState(() => showLabel = false);
+      } else if (!isScrollingDown && !showLabel) {
+        setState(() => showLabel = true);
+      }
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    widget.scrollController?.addListener(scrollControllerListener);
+  }
+
+  @override
+  void didUpdateWidget(M3EExtendedFloatingActionButton oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    if (widget.scrollController != oldWidget.scrollController) {
+      oldWidget.scrollController?.removeListener(scrollControllerListener);
+      widget.scrollController?.addListener(scrollControllerListener);
+    }
+  }
+
+  @override
+  void dispose() {
+    widget.scrollController?.removeListener(scrollControllerListener);
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    assert(debugCheckHasExpressiveMaterial(context));
+
     final theme = Theme.of(context);
     final floatingActionButtonTheme = theme.floatingActionButtonTheme;
-    final m3eFabTheme = theme.extension<M3ETheme>()?.floatingActionButtonTheme;
-    final defaults = _ExtendedFABDefaultsM3E(context, floatingActionButtonType);
+    final m3eTheme = M3ETheme.of(context);
+    final m3eFabTheme = m3eTheme.floatingActionButtonTheme;
+    final defaults = _ExtendedFABDefaultsM3E(
+      context,
+      widget.floatingActionButtonType,
+    );
 
     final foregroundColor =
-        this.foregroundColor ??
+        widget.foregroundColor ??
         floatingActionButtonTheme.foregroundColor ??
         defaults.foregroundColor;
     final backgroundColor =
-        this.backgroundColor ??
+        widget.backgroundColor ??
         floatingActionButtonTheme.backgroundColor ??
         defaults.backgroundColor;
     final focusColor =
-        this.focusColor ??
+        widget.focusColor ??
         floatingActionButtonTheme.focusColor ??
         defaults.focusColor;
     final hoverColor =
-        this.hoverColor ??
+        widget.hoverColor ??
         floatingActionButtonTheme.hoverColor ??
         defaults.hoverColor;
     final splashColor =
-        this.splashColor ??
+        widget.splashColor ??
         floatingActionButtonTheme.splashColor ??
         defaults.splashColor;
     final elevation =
-        this.elevation ??
+        widget.elevation ??
         floatingActionButtonTheme.elevation ??
         defaults.elevation!;
     final focusElevation =
-        this.focusElevation ??
+        widget.focusElevation ??
         floatingActionButtonTheme.focusElevation ??
         defaults.focusElevation!;
     final hoverElevation =
-        this.hoverElevation ??
+        widget.hoverElevation ??
         floatingActionButtonTheme.hoverElevation ??
         defaults.hoverElevation!;
     final disabledElevation =
-        this.disabledElevation ??
+        widget.disabledElevation ??
         floatingActionButtonTheme.disabledElevation ??
         defaults.disabledElevation ??
         elevation;
     final highlightElevation =
-        this.highlightElevation ??
+        widget.highlightElevation ??
         floatingActionButtonTheme.highlightElevation ??
         defaults.highlightElevation!;
     final materialTapTargetSize =
-        this.materialTapTargetSize ?? theme.materialTapTargetSize;
+        widget.materialTapTargetSize ?? theme.materialTapTargetSize;
     final enableFeedback =
-        this.enableFeedback ??
+        widget.enableFeedback ??
         floatingActionButtonTheme.enableFeedback ??
         defaults.enableFeedback!;
     final iconSize = floatingActionButtonTheme.iconSize ?? defaults.iconSize;
-    final extendedTextStyle = (textStyle ??
+    final extendedTextStyle = (widget.textStyle ??
             floatingActionButtonTheme.extendedTextStyle ??
             defaults.extendedTextStyle!)
         .copyWith(color: foregroundColor);
     final shape =
-        this.shape ?? floatingActionButtonTheme.shape ?? defaults.shape;
+        widget.shape ?? floatingActionButtonTheme.shape ?? defaults.shape;
 
     final iconLabelSpacing =
-        this.iconLabelSpacing ??
+        widget.iconLabelSpacing ??
         floatingActionButtonTheme.extendedIconLabelSpacing ??
         defaults.extendedIconLabelSpacing;
     final padding =
-        this.padding ??
+        widget.padding ??
         floatingActionButtonTheme.extendedPadding ??
         defaults.extendedPadding;
+
+    final labelSpec = m3eTheme.motionScheme.defaultEffectsSpec;
 
     final resolvedChild = _ChildOverflowBox(
       child: Padding(
@@ -318,18 +382,22 @@ class M3EExtendedFloatingActionButton extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           spacing: iconLabelSpacing,
           children: [
-            if (icon case final child?)
+            if (widget.icon case final child?)
               IconTheme.merge(
                 data: IconThemeData(size: iconSize),
                 child: child,
               ),
-            label,
+            AnimatedSize(
+              duration: labelSpec.duration,
+              curve: labelSpec.curve,
+              child: showLabel ? widget.label : SizedBox.shrink(),
+            ),
           ],
         ),
       ),
     );
 
-    final sizeConstraints = switch (floatingActionButtonType) {
+    final sizeConstraints = switch (widget.floatingActionButtonType) {
       M3EFloatingActionButtonType.small =>
         m3eFabTheme?.extendedSmallSizeConstraints ??
             defaults.extendedSmallSizeConstraints,
@@ -342,9 +410,9 @@ class M3EExtendedFloatingActionButton extends StatelessWidget {
     };
 
     Widget result = RawMaterialButton(
-      onPressed: onPressed,
+      onPressed: widget.onPressed,
       mouseCursor: _EffectiveMouseCursor(
-        mouseCursor,
+        widget.mouseCursor,
         floatingActionButtonTheme.mouseCursor,
       ),
       elevation: elevation,
@@ -360,17 +428,17 @@ class M3EExtendedFloatingActionButton extends StatelessWidget {
       splashColor: splashColor,
       textStyle: extendedTextStyle,
       shape: shape,
-      clipBehavior: clipBehavior,
-      focusNode: focusNode,
-      autofocus: autofocus,
+      clipBehavior: widget.clipBehavior,
+      focusNode: widget.focusNode,
+      autofocus: widget.autofocus,
       enableFeedback: enableFeedback,
       child: resolvedChild,
     );
 
-    if (tooltip case final tooltip?) {
+    if (widget.tooltip case final tooltip?) {
       result = Tooltip(message: tooltip, child: result);
     }
-    if (heroTag case final heroTag?) {
+    if (widget.heroTag case final heroTag?) {
       result = Hero(tag: heroTag, child: result);
     }
 
@@ -383,60 +451,88 @@ class M3EExtendedFloatingActionButton extends StatelessWidget {
     properties.add(
       ObjectFlagProperty<VoidCallback>(
         'onPressed',
-        onPressed,
+        widget.onPressed,
         ifNull: 'disabled',
       ),
     );
-    properties.add(StringProperty('tooltip', tooltip, defaultValue: null));
     properties.add(
-      ColorProperty('foregroundColor', foregroundColor, defaultValue: null),
+      StringProperty('tooltip', widget.tooltip, defaultValue: null),
     );
     properties.add(
-      ColorProperty('backgroundColor', backgroundColor, defaultValue: null),
-    );
-    properties.add(ColorProperty('focusColor', focusColor, defaultValue: null));
-    properties.add(ColorProperty('hoverColor', hoverColor, defaultValue: null));
-    properties.add(
-      ColorProperty('splashColor', splashColor, defaultValue: null),
-    );
-    properties.add(
-      ObjectFlagProperty<Object>('heroTag', heroTag, ifPresent: 'hero'),
-    );
-    properties.add(DoubleProperty('elevation', elevation, defaultValue: null));
-    properties.add(
-      DoubleProperty('focusElevation', focusElevation, defaultValue: null),
+      ColorProperty(
+        'foregroundColor',
+        widget.foregroundColor,
+        defaultValue: null,
+      ),
     );
     properties.add(
-      DoubleProperty('hoverElevation', hoverElevation, defaultValue: null),
+      ColorProperty(
+        'backgroundColor',
+        widget.backgroundColor,
+        defaultValue: null,
+      ),
+    );
+    properties.add(
+      ColorProperty('focusColor', widget.focusColor, defaultValue: null),
+    );
+    properties.add(
+      ColorProperty('hoverColor', widget.hoverColor, defaultValue: null),
+    );
+    properties.add(
+      ColorProperty('splashColor', widget.splashColor, defaultValue: null),
+    );
+    properties.add(
+      ObjectFlagProperty<Object>('heroTag', widget.heroTag, ifPresent: 'hero'),
+    );
+    properties.add(
+      DoubleProperty('elevation', widget.elevation, defaultValue: null),
+    );
+    properties.add(
+      DoubleProperty(
+        'focusElevation',
+        widget.focusElevation,
+        defaultValue: null,
+      ),
+    );
+    properties.add(
+      DoubleProperty(
+        'hoverElevation',
+        widget.hoverElevation,
+        defaultValue: null,
+      ),
     );
     properties.add(
       DoubleProperty(
         'highlightElevation',
-        highlightElevation,
+        widget.highlightElevation,
         defaultValue: null,
       ),
     );
     properties.add(
       DoubleProperty(
         'disabledElevation',
-        disabledElevation,
+        widget.disabledElevation,
         defaultValue: null,
       ),
     );
     properties.add(
-      DiagnosticsProperty<ShapeBorder>('shape', shape, defaultValue: null),
+      DiagnosticsProperty<ShapeBorder>(
+        'shape',
+        widget.shape,
+        defaultValue: null,
+      ),
     );
     properties.add(
       DiagnosticsProperty<FocusNode>(
         'focusNode',
-        focusNode,
+        widget.focusNode,
         defaultValue: null,
       ),
     );
     properties.add(
       DiagnosticsProperty<MaterialTapTargetSize>(
         'materialTapTargetSize',
-        materialTapTargetSize,
+        widget.materialTapTargetSize,
         defaultValue: null,
       ),
     );
@@ -538,9 +634,21 @@ class _RenderChildOverflowBox extends RenderAligningShiftedBox {
 
 class _ExtendedFABDefaultsM3E extends FloatingActionButtonThemeData {
   _ExtendedFABDefaultsM3E(this.context, this.type)
-    : extendedSmallSizeConstraints = const BoxConstraints.tightFor(height: 56),
-      extendedMediumSizeConstraints = const BoxConstraints.tightFor(height: 80),
-      extendedLargeSizeConstraints = const BoxConstraints.tightFor(height: 96),
+    : extendedSmallSizeConstraints = const BoxConstraints(
+        minHeight: 56,
+        maxHeight: 56,
+        minWidth: 56,
+      ),
+      extendedMediumSizeConstraints = const BoxConstraints(
+        minHeight: 80,
+        maxHeight: 80,
+        minWidth: 80,
+      ),
+      extendedLargeSizeConstraints = const BoxConstraints(
+        minHeight: 96,
+        maxHeight: 96,
+        minWidth: 96,
+      ),
       super(
         elevation: 6.0,
         focusElevation: 6.0,

@@ -31,16 +31,29 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  final scrollController = ScrollController();
+
+  @override
+  void dispose() {
+    scrollController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text(widget.title)),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [],
-        ),
+      floatingActionButton: M3EExtendedFloatingActionButton(
+        onPressed: () {},
+        label: Text('Compose'),
+        icon: Icon(Icons.edit),
+        scrollController: scrollController,
+      ),
+      body: ListView.builder(
+        controller: scrollController,
+        itemBuilder: (context, index) {
+          return ListTile(title: Text('Index $index'));
+        },
       ),
     );
   }
