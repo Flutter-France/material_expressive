@@ -13,15 +13,18 @@ Widget buildFloatingActionButton(BuildContext context) {
     labelBuilder: (s) => s.label,
   );
 
+  final (:backColor, :onColor) = style.colorFetcher(Theme.of(context));
+
   return M3EMediumFloatingActionButton(
     onPressed: enabled ? () {} : null,
-    backgroundColor: style.backgroundColor(context),
+    backgroundColor: backColor,
     child: Icon(Icons.stars),
   );
 }
 
 @widgetbook.UseCase(name: 'Extended FAB', type: M3EExtendedFloatingActionButton)
 Widget buildExtendedFloatingActionButton(BuildContext context) {
+  final theme = Theme.of(context);
   final size = context.knobs.list<_FABSize>(
     label: 'Size',
     options: _FABSize.values,
@@ -40,32 +43,35 @@ Widget buildExtendedFloatingActionButton(BuildContext context) {
   const icon = Icon(Icons.stars);
   const label = Text('Label');
 
+  final (:backColor, :onColor) = style.colorFetcher(theme);
+
   return switch (size) {
     _FABSize.small => M3EExtendedFloatingActionButton.small(
       onPressed: onPressed,
-      backgroundColor: style.backgroundColor(context),
-      foregroundColor: style.foregroundColor(context),
+      backgroundColor: backColor,
+      foregroundColor: onColor,
       icon: icon,
       label: label,
     ),
     _FABSize.medium => M3EExtendedFloatingActionButton.medium(
       onPressed: onPressed,
-      backgroundColor: style.backgroundColor(context),
-      foregroundColor: style.foregroundColor(context),
+      backgroundColor: backColor,
+      foregroundColor: onColor,
       icon: icon,
       label: label,
     ),
     _FABSize.large => M3EExtendedFloatingActionButton.large(
       onPressed: onPressed,
-      backgroundColor: style.backgroundColor(context),
-      foregroundColor: style.foregroundColor(context),
+      backgroundColor: backColor,
+      foregroundColor: onColor,
       icon: icon,
       label: label,
     ),
   };
 }
 
-typedef _ColorFetcher = Color Function(BuildContext context);
+typedef _ColorRecord = ({Color backColor, Color onColor});
+typedef _ColorFetcher = _ColorRecord Function(ThemeData theme);
 
 enum _FABSize {
   small('Small'),
@@ -78,76 +84,57 @@ enum _FABSize {
 }
 
 enum _FABStyle {
-  primaryContainer(
-    'Primary container',
-    _primaryContainerBackground,
-    _primaryContainerForeground,
-  ),
-  secondaryContainer(
-    'Secondary container',
-    _secondaryContainerBackground,
-    _secondaryContainerForeground,
-  ),
-  tertiaryContainer(
-    'Tertiary container',
-    _tertiaryContainerBackground,
-    _tertiaryContainerForeground,
-  ),
-  primary('Primary', _primaryBackground, _primaryForeground),
-  secondary('Secondary', _secondaryBackground, _secondaryForeground),
-  tertiary('Tertiary', _tertiaryBackground, _tertiaryForeground);
+  primaryContainer('Primary container', _primaryContainer),
+  secondaryContainer('Secondary container', _secondaryContainer),
+  tertiaryContainer('Tertiary container', _tertiaryContainer),
+  primary('Primary', _primary),
+  secondary('Secondary', _secondary),
+  tertiary('Tertiary', _tertiary);
 
-  const _FABStyle(this.label, this.backgroundColor, this.foregroundColor);
+  const _FABStyle(this.label, this.colorFetcher);
 
   final String label;
-  final _ColorFetcher backgroundColor;
-  final _ColorFetcher foregroundColor;
+  final _ColorFetcher colorFetcher;
 
-  static Color _primaryContainerBackground(BuildContext context) {
-    return Theme.of(context).colorScheme.primaryContainer;
+  static _ColorRecord _primaryContainer(ThemeData theme) {
+    return (
+      backColor: theme.colorScheme.primaryContainer,
+      onColor: theme.colorScheme.onPrimaryContainer,
+    );
   }
 
-  static Color _primaryContainerForeground(BuildContext context) {
-    return Theme.of(context).colorScheme.onPrimaryContainer;
+  static _ColorRecord _secondaryContainer(ThemeData theme) {
+    return (
+      backColor: theme.colorScheme.secondaryContainer,
+      onColor: theme.colorScheme.onSecondaryContainer,
+    );
   }
 
-  static Color _secondaryContainerBackground(BuildContext context) {
-    return Theme.of(context).colorScheme.secondaryContainer;
+  static _ColorRecord _tertiaryContainer(ThemeData theme) {
+    return (
+      backColor: theme.colorScheme.tertiaryContainer,
+      onColor: theme.colorScheme.onTertiaryContainer,
+    );
   }
 
-  static Color _secondaryContainerForeground(BuildContext context) {
-    return Theme.of(context).colorScheme.onSecondaryContainer;
+  static _ColorRecord _primary(ThemeData theme) {
+    return (
+      backColor: theme.colorScheme.primary,
+      onColor: theme.colorScheme.onPrimary,
+    );
   }
 
-  static Color _tertiaryContainerBackground(BuildContext context) {
-    return Theme.of(context).colorScheme.tertiaryContainer;
+  static _ColorRecord _secondary(ThemeData theme) {
+    return (
+      backColor: theme.colorScheme.secondary,
+      onColor: theme.colorScheme.onSecondary,
+    );
   }
 
-  static Color _tertiaryContainerForeground(BuildContext context) {
-    return Theme.of(context).colorScheme.onTertiaryContainer;
-  }
-
-  static Color _primaryBackground(BuildContext context) {
-    return Theme.of(context).colorScheme.primary;
-  }
-
-  static Color _primaryForeground(BuildContext context) {
-    return Theme.of(context).colorScheme.onPrimary;
-  }
-
-  static Color _secondaryBackground(BuildContext context) {
-    return Theme.of(context).colorScheme.secondary;
-  }
-
-  static Color _secondaryForeground(BuildContext context) {
-    return Theme.of(context).colorScheme.onSecondary;
-  }
-
-  static Color _tertiaryBackground(BuildContext context) {
-    return Theme.of(context).colorScheme.tertiary;
-  }
-
-  static Color _tertiaryForeground(BuildContext context) {
-    return Theme.of(context).colorScheme.onTertiary;
+  static _ColorRecord _tertiary(ThemeData theme) {
+    return (
+      backColor: theme.colorScheme.tertiary,
+      onColor: theme.colorScheme.onTertiary,
+    );
   }
 }
