@@ -380,7 +380,6 @@ class _M3EExtendedFloatingActionButtonState
         padding: padding,
         child: Row(
           mainAxisSize: MainAxisSize.min,
-          spacing: iconLabelSpacing,
           children: [
             if (widget.icon case final child?)
               IconTheme.merge(
@@ -390,7 +389,13 @@ class _M3EExtendedFloatingActionButtonState
             AnimatedSize(
               duration: labelSpec.duration,
               curve: labelSpec.curve,
-              child: showLabel ? widget.label : SizedBox.shrink(),
+              child:
+                  showLabel
+                      ? Padding(
+                        padding: EdgeInsets.only(left: iconLabelSpacing),
+                        child: widget.label,
+                      )
+                      : SizedBox.shrink(),
             ),
           ],
         ),
