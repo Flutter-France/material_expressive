@@ -318,7 +318,8 @@ class _M3EExtendedFloatingActionButtonState
         floatingActionButtonTheme.extendedPadding ??
         defaults.extendedPadding;
 
-    final sizeAnimationSpec = m3eTheme.motionScheme.fastSpatialSpec;
+    final expandAnimationSpec = m3eTheme.motionScheme.defaultEffectsSpec;
+    final collapseAnimationSpec = m3eTheme.motionScheme.fastEffectsSpec;
     final opacityAnimationSpec = m3eTheme.motionScheme.fastEffectsSpec;
 
     final sizeConstraints = switch (widget.floatingActionButtonType) {
@@ -360,8 +361,9 @@ class _M3EExtendedFloatingActionButtonState
             children: [
               if (widget.icon case final icon?) icon,
               AnimatedSize(
-                duration: sizeAnimationSpec.duration,
-                curve: sizeAnimationSpec.curve,
+                duration: expandAnimationSpec.duration,
+                reverseDuration: collapseAnimationSpec.duration,
+                curve: expandAnimationSpec.curve,
                 child:
                     showLabel
                         ? Padding(
