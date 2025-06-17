@@ -59,23 +59,27 @@ class _MyHomePageState extends State<MyHomePage> {
           ],
         ),
       ),
-      body: [
-        _PageContent(
+      body: switch (currentIndex) {
+        0 => _PageContent(
+          key: Key('page_0'),
           fabLabel: 'Compose',
           icon: Icons.edit,
           onScroll: handleOnScroll,
         ),
-        _PageContent(
+        1 => _PageContent(
+          key: Key('page_1'),
           fabLabel: 'Add Friend',
           icon: Icons.person_add,
           onScroll: handleOnScroll,
         ),
-        _PageContent(
+        2 => _PageContent(
+          key: Key('page_2'),
           fabLabel: 'Start Call',
           icon: Icons.video_call,
           onScroll: handleOnScroll,
         ),
-      ][currentIndex],
+        _ => const Center(child: Text('Unknown Page')),
+      },
     );
   }
 
@@ -93,6 +97,7 @@ class _PageContent extends StatefulWidget {
     required this.fabLabel,
     required this.icon,
     required this.onScroll,
+    super.key,
   });
 
   final String fabLabel;

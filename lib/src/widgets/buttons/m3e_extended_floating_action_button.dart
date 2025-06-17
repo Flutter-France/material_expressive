@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:material_expressive/src/theme/m3e_theme.dart';
+import 'package:material_expressive/src/theme/motion_scheme.dart';
 import 'package:material_expressive/src/utils/debug_check_has_expressive_material.dart';
 
 import 'm3e_floating_action_button.dart';
@@ -257,6 +258,10 @@ class M3EExtendedFloatingActionButton extends StatefulWidget {
 class _M3EExtendedFloatingActionButtonState
     extends State<M3EExtendedFloatingActionButton>
     with TickerProviderStateMixin {
+  late AnimationController appearanceController;
+  late Animation<double> appearanceAnimation;
+
+  bool appearanceControllerInitialized = false;
   bool showLabel = true;
 
   void scrollControllerListener() {
@@ -276,6 +281,32 @@ class _M3EExtendedFloatingActionButtonState
   void initState() {
     super.initState();
     widget.scrollController?.addListener(scrollControllerListener);
+
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      appearanceController.forward();
+    });
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    final m3eTheme = M3ETheme.maybeOf(context);
+    final motion = m3eTheme?.motionScheme ?? const M3EMotionScheme();
+    final spec = motion.fastSpatialSpec;
+
+    if (!appearanceControllerInitialized) {
+      appearanceController = AnimationController(
+        vsync: this,
+        duration: spec.duration,
+      );
+      appearanceControllerInitialized = true;
+
+      appearanceAnimation = CurvedAnimation(
+        parent: appearanceController,
+        curve: spec.curve,
+      );
+    }
   }
 
   @override
@@ -291,6 +322,7 @@ class _M3EExtendedFloatingActionButtonState
   @override
   void dispose() {
     widget.scrollController?.removeListener(scrollControllerListener);
+    appearanceController.dispose();
     super.dispose();
   }
 
@@ -420,30 +452,34 @@ class _M3EExtendedFloatingActionButtonState
             defaults.extendedLargeSizeConstraints,
     };
 
-    Widget result = RawMaterialButton(
-      onPressed: widget.onPressed,
-      mouseCursor: _EffectiveMouseCursor(
-        widget.mouseCursor,
-        floatingActionButtonTheme.mouseCursor,
+    Widget result = ScaleTransition(
+      scale: appearanceAnimation,
+      alignment: Alignment.center,
+      child: RawMaterialButton(
+        onPressed: widget.onPressed,
+        mouseCursor: _EffectiveMouseCursor(
+          widget.mouseCursor,
+          floatingActionButtonTheme.mouseCursor,
+        ),
+        elevation: elevation,
+        focusElevation: focusElevation,
+        hoverElevation: hoverElevation,
+        highlightElevation: highlightElevation,
+        disabledElevation: disabledElevation,
+        constraints: sizeConstraints,
+        materialTapTargetSize: materialTapTargetSize,
+        fillColor: backgroundColor,
+        focusColor: focusColor,
+        hoverColor: hoverColor,
+        splashColor: splashColor,
+        textStyle: extendedTextStyle,
+        shape: shape,
+        clipBehavior: widget.clipBehavior,
+        focusNode: widget.focusNode,
+        autofocus: widget.autofocus,
+        enableFeedback: enableFeedback,
+        child: resolvedChild,
       ),
-      elevation: elevation,
-      focusElevation: focusElevation,
-      hoverElevation: hoverElevation,
-      highlightElevation: highlightElevation,
-      disabledElevation: disabledElevation,
-      constraints: sizeConstraints,
-      materialTapTargetSize: materialTapTargetSize,
-      fillColor: backgroundColor,
-      focusColor: focusColor,
-      hoverColor: hoverColor,
-      splashColor: splashColor,
-      textStyle: extendedTextStyle,
-      shape: shape,
-      clipBehavior: widget.clipBehavior,
-      focusNode: widget.focusNode,
-      autofocus: widget.autofocus,
-      enableFeedback: enableFeedback,
-      child: resolvedChild,
     );
 
     if (widget.tooltip case final tooltip?) {

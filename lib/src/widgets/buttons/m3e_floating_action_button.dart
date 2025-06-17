@@ -361,7 +361,7 @@ class M3EFloatingActionButton extends StatefulWidget {
 class _M3EFloatingActionButtonState extends State<M3EFloatingActionButton>
     with TickerProviderStateMixin {
   late AnimationController controller;
-  late Animation<double> fabScaleAnimation;
+  late Animation<double> appearanceAnimation;
 
   bool controllerInitialized = false;
 
@@ -380,13 +380,13 @@ class _M3EFloatingActionButtonState extends State<M3EFloatingActionButton>
 
     final m3eTheme = M3ETheme.maybeOf(context);
     final motion = m3eTheme?.motionScheme ?? const M3EMotionScheme();
-    final spec = motion.defaultSpatialSpec;
+    final spec = motion.fastSpatialSpec;
 
     if (!controllerInitialized) {
       controller = AnimationController(vsync: this, duration: spec.duration);
       controllerInitialized = true;
 
-      fabScaleAnimation = CurvedAnimation(
+      appearanceAnimation = CurvedAnimation(
         parent: controller,
         curve: spec.curve,
       );
@@ -421,7 +421,7 @@ class _M3EFloatingActionButtonState extends State<M3EFloatingActionButton>
     };
 
     return ScaleTransition(
-      scale: fabScaleAnimation,
+      scale: appearanceAnimation,
       alignment: Alignment.center,
       child: Theme(
         data: theme.copyWith(
@@ -479,9 +479,17 @@ class _MediumFABDefaultsM3E extends FloatingActionButtonThemeData {
   final M3EFloatingActionButtonType type;
 
   @override
-  ShapeBorder get shape => const RoundedRectangleBorder(
-    borderRadius: BorderRadius.all(Radius.circular(20.0)),
-  );
+  ShapeBorder get shape => switch (type) {
+    M3EFloatingActionButtonType.small => const RoundedRectangleBorder(
+      borderRadius: BorderRadius.all(Radius.circular(16.0)),
+    ),
+    M3EFloatingActionButtonType.medium => const RoundedRectangleBorder(
+      borderRadius: BorderRadius.all(Radius.circular(20.0)),
+    ),
+    M3EFloatingActionButtonType.large => const RoundedRectangleBorder(
+      borderRadius: BorderRadius.all(Radius.circular(28.0)),
+    ),
+  };
 
   @override
   double get iconSize => switch (type) {
