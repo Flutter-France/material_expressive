@@ -39,25 +39,33 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text(widget.title)),
-      bottomNavigationBar: AnimatedSlide(
-        offset: hideBottomNavBar ? const Offset(0, 1) : Offset.zero,
+      bottomNavigationBar: AnimatedSize(
         duration: const Duration(milliseconds: 300),
         curve: Curves.easeInOut,
-        child: BottomNavigationBar(
-          currentIndex: currentIndex,
-          onTap: (index) {
-            if (index == currentIndex) return;
-            setState(() => currentIndex = index);
-          },
-          items: const [
-            BottomNavigationBarItem(icon: Icon(Icons.mail), label: 'Mail'),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.alternate_email),
-              label: 'Friends',
-            ),
-            BottomNavigationBarItem(icon: Icon(Icons.videocam), label: 'Video'),
-          ],
-        ),
+        alignment: Alignment.topCenter,
+        child: hideBottomNavBar
+            ? SizedBox.shrink()
+            : BottomNavigationBar(
+                currentIndex: currentIndex,
+                onTap: (index) {
+                  if (index == currentIndex) return;
+                  setState(() => currentIndex = index);
+                },
+                items: const [
+                  BottomNavigationBarItem(
+                    icon: Icon(Icons.mail),
+                    label: 'Mail',
+                  ),
+                  BottomNavigationBarItem(
+                    icon: Icon(Icons.alternate_email),
+                    label: 'Friends',
+                  ),
+                  BottomNavigationBarItem(
+                    icon: Icon(Icons.videocam),
+                    label: 'Video',
+                  ),
+                ],
+              ),
       ),
       body: switch (currentIndex) {
         0 => _PageContent(
