@@ -32,33 +32,32 @@ Widget buildFloatingActionButton(BuildContext context) {
 @widgetbook.UseCase(name: 'Extended FAB', type: M3EExtendedFloatingActionButton)
 Widget buildExtendedFloatingActionButton(BuildContext context) {
   final theme = Theme.of(context);
+
   final size = context.knobs.list<M3EFloatingActionButtonType>(
     label: 'Size',
     options: M3EFloatingActionButtonType.values,
     labelBuilder: (s) => s.name,
   );
-
-  final enabled = context.knobs.boolean(label: 'Enabled', initialValue: true);
-
   final style = context.knobs.list<_FABStyle>(
     label: 'Style',
     options: _FABStyle.values,
     labelBuilder: (s) => s.label,
   );
 
-  final onPressed = enabled ? () {} : null;
-  const icon = Icon(Icons.stars);
-  const label = Text('Label');
+  final enabled = context.knobs.boolean(label: 'Enabled', initialValue: true);
+  final mini = context.knobs.boolean(label: 'Mini', initialValue: false);
+  final label = context.knobs.string(label: 'Label', initialValue: 'Label');
 
   final (:backColor, :onColor) = style.colorFetcher(theme);
 
   return M3EExtendedFloatingActionButton(
-    onPressed: onPressed,
+    onPressed: enabled ? () {} : null,
     backgroundColor: backColor,
     foregroundColor: onColor,
-    icon: icon,
-    label: label,
+    icon: Icon(Icons.stars),
+    label: Text(label),
     floatingActionButtonType: size,
+    mini: mini,
   );
 }
 

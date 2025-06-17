@@ -42,6 +42,7 @@ class M3EExtendedFloatingActionButton extends StatefulWidget {
     required this.label,
     this.enableFeedback,
     this.scrollController,
+    this.mini = false,
     this.floatingActionButtonType = M3EFloatingActionButtonType.medium,
   }) : assert(elevation == null || elevation >= 0.0),
        assert(focusElevation == null || focusElevation >= 0.0),
@@ -76,6 +77,7 @@ class M3EExtendedFloatingActionButton extends StatefulWidget {
     this.icon,
     required this.label,
     this.enableFeedback,
+    this.mini = false,
     this.scrollController,
   }) : assert(elevation == null || elevation >= 0.0),
        assert(focusElevation == null || focusElevation >= 0.0),
@@ -111,6 +113,7 @@ class M3EExtendedFloatingActionButton extends StatefulWidget {
     this.icon,
     required this.label,
     this.enableFeedback,
+    this.mini = false,
     this.scrollController,
   }) : assert(elevation == null || elevation >= 0.0),
        assert(focusElevation == null || focusElevation >= 0.0),
@@ -146,6 +149,7 @@ class M3EExtendedFloatingActionButton extends StatefulWidget {
     this.icon,
     required this.label,
     this.enableFeedback,
+    this.mini = false,
     this.scrollController,
   }) : assert(elevation == null || elevation >= 0.0),
        assert(focusElevation == null || focusElevation >= 0.0),
@@ -245,6 +249,8 @@ class M3EExtendedFloatingActionButton extends StatefulWidget {
   /// when scrolling up.
   final ScrollController? scrollController;
 
+  final bool mini;
+
   final M3EFloatingActionButtonType floatingActionButtonType;
 
   @override
@@ -255,9 +261,12 @@ class M3EExtendedFloatingActionButton extends StatefulWidget {
 class _M3EExtendedFloatingActionButtonState
     extends State<M3EExtendedFloatingActionButton>
     with TickerProviderStateMixin {
-  bool showLabel = true;
+  late bool showLabel = !widget.mini;
 
   void scrollControllerListener() {
+    // Do not show/hide label if the mini mode is enforced.
+    if (widget.mini) return;
+
     if (widget.scrollController case final controller?) {
       final position = controller.position;
       final isScrollingDown =
@@ -401,7 +410,7 @@ class _M3EExtendedFloatingActionButtonState
         autofocus: widget.autofocus,
         materialTapTargetSize: widget.materialTapTargetSize,
         enableFeedback: widget.enableFeedback,
-        isExtended: true,
+        isExtended: !widget.mini,
       ),
     );
   }
