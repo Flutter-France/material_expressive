@@ -4,6 +4,13 @@ import 'package:material_expressive/src/theme/motion_scheme.dart';
 
 enum M3EFloatingActionButtonType { small, medium, large }
 
+class _DefaultHeroTag {
+  const _DefaultHeroTag();
+
+  @override
+  String toString() => '<default M3EExtendedFloatingActionButton tag>';
+}
+
 class M3EFloatingActionButton extends StatefulWidget {
   const M3EFloatingActionButton({
     super.key,
@@ -14,7 +21,7 @@ class M3EFloatingActionButton extends StatefulWidget {
     this.focusColor,
     this.hoverColor,
     this.splashColor,
-    this.heroTag,
+    this.heroTag = const _DefaultHeroTag(),
     this.elevation,
     this.focusElevation,
     this.hoverElevation,
@@ -45,7 +52,7 @@ class M3EFloatingActionButton extends StatefulWidget {
     this.focusColor,
     this.hoverColor,
     this.splashColor,
-    this.heroTag,
+    this.heroTag = const _DefaultHeroTag(),
     this.elevation,
     this.focusElevation,
     this.hoverElevation,
@@ -76,7 +83,7 @@ class M3EFloatingActionButton extends StatefulWidget {
     this.focusColor,
     this.hoverColor,
     this.splashColor,
-    this.heroTag,
+    this.heroTag = const _DefaultHeroTag(),
     this.elevation,
     this.focusElevation,
     this.hoverElevation,
@@ -107,7 +114,7 @@ class M3EFloatingActionButton extends StatefulWidget {
     this.focusColor,
     this.hoverColor,
     this.splashColor,
-    this.heroTag,
+    this.heroTag = const _DefaultHeroTag(),
     this.elevation,
     this.focusElevation,
     this.hoverElevation,
