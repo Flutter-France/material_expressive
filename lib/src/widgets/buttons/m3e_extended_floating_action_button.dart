@@ -261,8 +261,6 @@ class _M3EExtendedFloatingActionButtonState
 
   void scrollControllerListener() {
     if (widget.scrollController case final controller?) {
-      if (!controller.hasClients) return;
-
       final position = controller.position;
       final isScrollingDown =
           position.userScrollDirection == ScrollDirection.reverse;

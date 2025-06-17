@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:material_expressive/material_expressive.dart';
 
 void main() => runApp(const MyApp());
@@ -31,7 +32,94 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  int currentIndex = 0;
+  bool hideBottomNavBar = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text(widget.title)),
+      bottomNavigationBar: AnimatedSlide(
+        offset: hideBottomNavBar ? const Offset(0, 1) : Offset.zero,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+        child: BottomNavigationBar(
+          currentIndex: currentIndex,
+          onTap: (index) {
+            if (index == currentIndex) return;
+            setState(() => currentIndex = index);
+          },
+          items: const [
+            BottomNavigationBarItem(icon: Icon(Icons.mail), label: 'Mail'),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.alternate_email),
+              label: 'Friends',
+            ),
+            BottomNavigationBarItem(icon: Icon(Icons.videocam), label: 'Video'),
+          ],
+        ),
+      ),
+      body: [
+        _PageContent(
+          fabLabel: 'Compose',
+          icon: Icons.edit,
+          onScroll: handleOnScroll,
+        ),
+        _PageContent(
+          fabLabel: 'Add Friend',
+          icon: Icons.person_add,
+          onScroll: handleOnScroll,
+        ),
+        _PageContent(
+          fabLabel: 'Start Call',
+          icon: Icons.video_call,
+          onScroll: handleOnScroll,
+        ),
+      ][currentIndex],
+    );
+  }
+
+  void handleOnScroll(bool isScrollingDown) {
+    if (isScrollingDown) {
+      setState(() => hideBottomNavBar = true);
+      return;
+    }
+    setState(() => hideBottomNavBar = false);
+  }
+}
+
+class _PageContent extends StatefulWidget {
+  const _PageContent({
+    required this.fabLabel,
+    required this.icon,
+    required this.onScroll,
+  });
+
+  final String fabLabel;
+  final IconData icon;
+  final void Function(bool isScrollingDown) onScroll;
+
+  @override
+  State<_PageContent> createState() => _PageContentState();
+}
+
+class _PageContentState extends State<_PageContent> {
   final scrollController = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    scrollController.addListener(() {
+      final position = scrollController.position;
+      final isScrollingDown =
+          position.userScrollDirection == ScrollDirection.reverse;
+      if (isScrollingDown) {
+        widget.onScroll(true);
+        return;
+      }
+      widget.onScroll(false);
+    });
+  }
 
   @override
   void dispose() {
@@ -42,17 +130,16 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(widget.title)),
       floatingActionButton: M3EExtendedFloatingActionButton(
         onPressed: () {},
-        label: Text('Compose'),
-        icon: Icon(Icons.edit),
+        label: Text(widget.fabLabel),
+        icon: Icon(widget.icon),
         scrollController: scrollController,
       ),
       body: ListView.builder(
         controller: scrollController,
         itemBuilder: (context, index) {
-          return ListTile(title: Text('Index $index'));
+          return ListTile(title: Text('Item $index'));
         },
       ),
     );
