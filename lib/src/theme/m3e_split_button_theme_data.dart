@@ -8,20 +8,14 @@ class M3ESplitButtonThemeData with Diagnosticable {
 
   const M3ESplitButtonThemeData({this.spacing});
 
-  static M3ESplitButtonThemeData? lerp(
-    M3ESplitButtonThemeData? a,
-    M3ESplitButtonThemeData? b,
-    double t,
-  ) {
-    return switch ((a, b)) {
-      (null, null) => null,
-      (null, final b?) => b,
-      (final a?, null) => a,
-      (final a?, final b?) =>
-        identical(a, b)
-            ? a
+  M3ESplitButtonThemeData lerp(M3ESplitButtonThemeData? other, double t) {
+    return switch (other) {
+      null => this,
+      final other =>
+        identical(this, other)
+            ? this
             : M3ESplitButtonThemeData(
-              spacing: lerpDouble(a.spacing, b.spacing, t),
+              spacing: lerpDouble(spacing, other.spacing, t),
             ),
     };
   }
