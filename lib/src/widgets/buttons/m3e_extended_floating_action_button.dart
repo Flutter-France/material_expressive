@@ -1,10 +1,7 @@
-import 'dart:math' as math;
-
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:material_expressive/src/theme/m3e_floating_action_button_theme_data.dart';
 import 'package:material_expressive/src/theme/m3e_theme.dart';
-import 'package:material_expressive/src/theme/motion_scheme.dart';
 import 'package:material_expressive/src/utils/debug_check_has_expressive_material.dart';
 
 import 'm3e_floating_action_button.dart';
@@ -258,10 +255,6 @@ class M3EExtendedFloatingActionButton extends StatefulWidget {
 class _M3EExtendedFloatingActionButtonState
     extends State<M3EExtendedFloatingActionButton>
     with TickerProviderStateMixin {
-  late AnimationController appearanceController;
-  late Animation<double> appearanceAnimation;
-
-  bool appearanceControllerInitialized = false;
   bool showLabel = true;
 
   void scrollControllerListener() {
@@ -281,32 +274,6 @@ class _M3EExtendedFloatingActionButtonState
   void initState() {
     super.initState();
     widget.scrollController?.addListener(scrollControllerListener);
-
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      appearanceController.forward();
-    });
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-
-    final m3eTheme = M3ETheme.maybeOf(context);
-    final motion = m3eTheme?.motionScheme ?? const M3EMotionScheme();
-    final spec = motion.fastSpatialSpec;
-
-    if (!appearanceControllerInitialized) {
-      appearanceController = AnimationController(
-        vsync: this,
-        duration: spec.duration,
-      );
-      appearanceControllerInitialized = true;
-
-      appearanceAnimation = CurvedAnimation(
-        parent: appearanceController,
-        curve: spec.curve,
-      );
-    }
   }
 
   @override
@@ -322,7 +289,6 @@ class _M3EExtendedFloatingActionButtonState
   @override
   void dispose() {
     widget.scrollController?.removeListener(scrollControllerListener);
-    appearanceController.dispose();
     super.dispose();
   }
 
@@ -339,61 +305,10 @@ class _M3EExtendedFloatingActionButtonState
       widget.floatingActionButtonType,
     );
 
-    final foregroundColor =
-        widget.foregroundColor ??
-        floatingActionButtonTheme.foregroundColor ??
-        defaults.foregroundColor;
-    final backgroundColor =
-        widget.backgroundColor ??
-        floatingActionButtonTheme.backgroundColor ??
-        defaults.backgroundColor;
-    final focusColor =
-        widget.focusColor ??
-        floatingActionButtonTheme.focusColor ??
-        defaults.focusColor;
-    final hoverColor =
-        widget.hoverColor ??
-        floatingActionButtonTheme.hoverColor ??
-        defaults.hoverColor;
-    final splashColor =
-        widget.splashColor ??
-        floatingActionButtonTheme.splashColor ??
-        defaults.splashColor;
-    final elevation =
-        widget.elevation ??
-        floatingActionButtonTheme.elevation ??
-        defaults.elevation!;
-    final focusElevation =
-        widget.focusElevation ??
-        floatingActionButtonTheme.focusElevation ??
-        defaults.focusElevation!;
-    final hoverElevation =
-        widget.hoverElevation ??
-        floatingActionButtonTheme.hoverElevation ??
-        defaults.hoverElevation!;
-    final disabledElevation =
-        widget.disabledElevation ??
-        floatingActionButtonTheme.disabledElevation ??
-        defaults.disabledElevation ??
-        elevation;
-    final highlightElevation =
-        widget.highlightElevation ??
-        floatingActionButtonTheme.highlightElevation ??
-        defaults.highlightElevation!;
-    final materialTapTargetSize =
-        widget.materialTapTargetSize ?? theme.materialTapTargetSize;
-    final enableFeedback =
-        widget.enableFeedback ??
-        floatingActionButtonTheme.enableFeedback ??
-        defaults.enableFeedback!;
-    final iconSize = floatingActionButtonTheme.iconSize ?? defaults.iconSize;
-    final extendedTextStyle = (widget.textStyle ??
-            floatingActionButtonTheme.extendedTextStyle ??
-            defaults.extendedTextStyle!)
-        .copyWith(color: foregroundColor);
-    final shape =
-        widget.shape ?? floatingActionButtonTheme.shape ?? defaults.shape;
-
+    final extendedTextStyle =
+        widget.textStyle ??
+        floatingActionButtonTheme.extendedTextStyle ??
+        defaults.extendedTextStyle;
     final iconLabelSpacing =
         widget.iconLabelSpacing ??
         floatingActionButtonTheme.extendedIconLabelSpacing ??
@@ -405,40 +320,6 @@ class _M3EExtendedFloatingActionButtonState
 
     final sizeAnimationSpec = m3eTheme.motionScheme.fastSpatialSpec;
     final opacityAnimationSpec = m3eTheme.motionScheme.fastEffectsSpec;
-
-    final resolvedChild = _ChildOverflowBox(
-      child: Padding(
-        padding: padding,
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            if (widget.icon case final child?)
-              IconTheme.merge(
-                data: IconThemeData(size: iconSize),
-                child: child,
-              ),
-            AnimatedSize(
-              duration: sizeAnimationSpec.duration,
-              curve: sizeAnimationSpec.curve,
-              child:
-                  showLabel
-                      ? Padding(
-                        padding: EdgeInsets.only(
-                          left: widget.icon != null ? iconLabelSpacing : 0,
-                        ),
-                        child: AnimatedOpacity(
-                          opacity: showLabel ? 1 : 0,
-                          duration: opacityAnimationSpec.duration,
-                          curve: opacityAnimationSpec.curve,
-                          child: widget.label,
-                        ),
-                      )
-                      : SizedBox.shrink(),
-            ),
-          ],
-        ),
-      ),
-    );
 
     final sizeConstraints = switch (widget.floatingActionButtonType) {
       M3EFloatingActionButtonType.small =>
@@ -452,230 +333,75 @@ class _M3EExtendedFloatingActionButtonState
             defaults.extendedLargeSizeConstraints,
     };
 
-    Widget result = ScaleTransition(
-      scale: appearanceAnimation,
-      alignment: Alignment.center,
-      child: RawMaterialButton(
-        onPressed: widget.onPressed,
-        mouseCursor: _EffectiveMouseCursor(
-          widget.mouseCursor,
-          floatingActionButtonTheme.mouseCursor,
+    return Theme(
+      data: theme.copyWith(
+        floatingActionButtonTheme: floatingActionButtonTheme.copyWith(
+          sizeConstraints: sizeConstraints,
+          smallSizeConstraints: sizeConstraints,
+          largeSizeConstraints: sizeConstraints,
+          extendedIconLabelSpacing: iconLabelSpacing,
+          extendedPadding: padding,
+          extendedTextStyle: extendedTextStyle,
         ),
-        elevation: elevation,
-        focusElevation: focusElevation,
-        hoverElevation: hoverElevation,
-        highlightElevation: highlightElevation,
-        disabledElevation: disabledElevation,
-        constraints: sizeConstraints,
-        materialTapTargetSize: materialTapTargetSize,
-        fillColor: backgroundColor,
-        focusColor: focusColor,
-        hoverColor: hoverColor,
-        splashColor: splashColor,
-        textStyle: extendedTextStyle,
-        shape: shape,
+        extensions: [
+          m3eTheme.copyWith(
+            floatingActionButtonTheme: (m3eFabTheme ??
+                    M3EFloatingActionButtonThemeData())
+                .copyWith(mediumSizeConstraints: sizeConstraints),
+          ),
+        ],
+      ),
+      child: M3EFloatingActionButton(
+        floatingActionButtonType: widget.floatingActionButtonType,
+        child: Padding(
+          padding: padding,
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (widget.icon case final icon?) icon,
+              AnimatedSize(
+                duration: sizeAnimationSpec.duration,
+                curve: sizeAnimationSpec.curve,
+                child:
+                    showLabel
+                        ? Padding(
+                          padding: EdgeInsets.only(
+                            left: widget.icon != null ? iconLabelSpacing : 0,
+                          ),
+                          child: AnimatedOpacity(
+                            opacity: showLabel ? 1 : 0,
+                            duration: opacityAnimationSpec.duration,
+                            curve: opacityAnimationSpec.curve,
+                            child: widget.label,
+                          ),
+                        )
+                        : SizedBox.shrink(),
+              ),
+            ],
+          ),
+        ),
+        tooltip: widget.tooltip,
+        foregroundColor: widget.foregroundColor,
+        backgroundColor: widget.backgroundColor,
+        focusColor: widget.focusColor,
+        hoverColor: widget.hoverColor,
+        splashColor: widget.splashColor,
+        heroTag: widget.heroTag,
+        elevation: widget.elevation,
+        focusElevation: widget.focusElevation,
+        hoverElevation: widget.hoverElevation,
+        highlightElevation: widget.highlightElevation,
+        disabledElevation: widget.disabledElevation,
+        onPressed: widget.onPressed,
+        mouseCursor: widget.mouseCursor,
         clipBehavior: widget.clipBehavior,
         focusNode: widget.focusNode,
         autofocus: widget.autofocus,
-        enableFeedback: enableFeedback,
-        child: resolvedChild,
+        materialTapTargetSize: widget.materialTapTargetSize,
+        enableFeedback: widget.enableFeedback,
+        isExtended: true,
       ),
     );
-
-    if (widget.tooltip case final tooltip?) {
-      result = Tooltip(message: tooltip, child: result);
-    }
-    if (widget.heroTag case final heroTag?) {
-      result = Hero(tag: heroTag, child: result);
-    }
-
-    return MergeSemantics(child: result);
-  }
-
-  @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    properties.add(
-      ObjectFlagProperty<VoidCallback>(
-        'onPressed',
-        widget.onPressed,
-        ifNull: 'disabled',
-      ),
-    );
-    properties.add(
-      StringProperty('tooltip', widget.tooltip, defaultValue: null),
-    );
-    properties.add(
-      ColorProperty(
-        'foregroundColor',
-        widget.foregroundColor,
-        defaultValue: null,
-      ),
-    );
-    properties.add(
-      ColorProperty(
-        'backgroundColor',
-        widget.backgroundColor,
-        defaultValue: null,
-      ),
-    );
-    properties.add(
-      ColorProperty('focusColor', widget.focusColor, defaultValue: null),
-    );
-    properties.add(
-      ColorProperty('hoverColor', widget.hoverColor, defaultValue: null),
-    );
-    properties.add(
-      ColorProperty('splashColor', widget.splashColor, defaultValue: null),
-    );
-    properties.add(
-      ObjectFlagProperty<Object>('heroTag', widget.heroTag, ifPresent: 'hero'),
-    );
-    properties.add(
-      DoubleProperty('elevation', widget.elevation, defaultValue: null),
-    );
-    properties.add(
-      DoubleProperty(
-        'focusElevation',
-        widget.focusElevation,
-        defaultValue: null,
-      ),
-    );
-    properties.add(
-      DoubleProperty(
-        'hoverElevation',
-        widget.hoverElevation,
-        defaultValue: null,
-      ),
-    );
-    properties.add(
-      DoubleProperty(
-        'highlightElevation',
-        widget.highlightElevation,
-        defaultValue: null,
-      ),
-    );
-    properties.add(
-      DoubleProperty(
-        'disabledElevation',
-        widget.disabledElevation,
-        defaultValue: null,
-      ),
-    );
-    properties.add(
-      DiagnosticsProperty<ShapeBorder>(
-        'shape',
-        widget.shape,
-        defaultValue: null,
-      ),
-    );
-    properties.add(
-      DiagnosticsProperty<FocusNode>(
-        'focusNode',
-        widget.focusNode,
-        defaultValue: null,
-      ),
-    );
-    properties.add(
-      DiagnosticsProperty<MaterialTapTargetSize>(
-        'materialTapTargetSize',
-        widget.materialTapTargetSize,
-        defaultValue: null,
-      ),
-    );
-  }
-}
-
-// This MaterialStateProperty is passed along to RawMaterialButton which
-// resolves the property against MaterialState.pressed, MaterialState.hovered,
-// MaterialState.focused, MaterialState.disabled.
-class _EffectiveMouseCursor extends WidgetStateMouseCursor {
-  const _EffectiveMouseCursor(this.widgetCursor, this.themeCursor);
-
-  final MouseCursor? widgetCursor;
-  final WidgetStateProperty<MouseCursor?>? themeCursor;
-
-  @override
-  MouseCursor resolve(Set<WidgetState> states) {
-    return WidgetStateProperty.resolveAs<MouseCursor?>(widgetCursor, states) ??
-        themeCursor?.resolve(states) ??
-        WidgetStateMouseCursor.clickable.resolve(states);
-  }
-
-  @override
-  String get debugDescription => 'MaterialStateMouseCursor(FloatActionButton)';
-}
-
-// This widget's size matches its child's size unless its constraints
-// force it to be larger or smaller. The child is centered.
-//
-// Used to encapsulate extended FABs whose size is fixed, using Row
-// and MainAxisSize.min, to be as wide as their label and icon.
-class _ChildOverflowBox extends SingleChildRenderObjectWidget {
-  const _ChildOverflowBox({super.child});
-
-  @override
-  _RenderChildOverflowBox createRenderObject(BuildContext context) {
-    return _RenderChildOverflowBox(textDirection: Directionality.of(context));
-  }
-
-  @override
-  void updateRenderObject(
-    BuildContext context,
-    _RenderChildOverflowBox renderObject,
-  ) {
-    renderObject.textDirection = Directionality.of(context);
-  }
-}
-
-class _RenderChildOverflowBox extends RenderAligningShiftedBox {
-  _RenderChildOverflowBox({super.textDirection})
-    : super(alignment: Alignment.center);
-
-  @override
-  double computeMinIntrinsicWidth(double height) => 0.0;
-
-  @override
-  double computeMinIntrinsicHeight(double width) => 0.0;
-
-  @override
-  Size computeDryLayout(BoxConstraints constraints) {
-    if (child != null) {
-      final Size childSize = child!.getDryLayout(const BoxConstraints());
-      return Size(
-        math.max(
-          constraints.minWidth,
-          math.min(constraints.maxWidth, childSize.width),
-        ),
-        math.max(
-          constraints.minHeight,
-          math.min(constraints.maxHeight, childSize.height),
-        ),
-      );
-    } else {
-      return constraints.biggest;
-    }
-  }
-
-  @override
-  void performLayout() {
-    final BoxConstraints constraints = this.constraints;
-    if (child != null) {
-      child!.layout(const BoxConstraints(), parentUsesSize: true);
-      size = Size(
-        math.max(
-          constraints.minWidth,
-          math.min(constraints.maxWidth, child!.size.width),
-        ),
-        math.max(
-          constraints.minHeight,
-          math.min(constraints.maxHeight, child!.size.height),
-        ),
-      );
-      alignChild();
-    } else {
-      size = constraints.biggest;
-    }
   }
 }
 
@@ -695,13 +421,6 @@ class _ExtendedFABDefaultsM3E extends FloatingActionButtonThemeData {
         minHeight: 96,
         maxHeight: 96,
         minWidth: 96,
-      ),
-      super(
-        elevation: 6.0,
-        focusElevation: 6.0,
-        hoverElevation: 8.0,
-        highlightElevation: 6.0,
-        enableFeedback: true,
       );
 
   final BuildContext context;
@@ -709,43 +428,7 @@ class _ExtendedFABDefaultsM3E extends FloatingActionButtonThemeData {
   final BoxConstraints extendedSmallSizeConstraints;
   final BoxConstraints extendedMediumSizeConstraints;
   final BoxConstraints extendedLargeSizeConstraints;
-  late final ColorScheme _colors = Theme.of(context).colorScheme;
   late final TextTheme _textTheme = Theme.of(context).textTheme;
-
-  @override
-  Color get foregroundColor => _colors.onPrimaryContainer;
-
-  @override
-  Color get backgroundColor => _colors.primaryContainer;
-
-  @override
-  Color get splashColor => _colors.onPrimaryContainer.withValues(alpha: .1);
-
-  @override
-  Color get focusColor => _colors.onPrimaryContainer.withValues(alpha: .1);
-
-  @override
-  Color get hoverColor => _colors.onPrimaryContainer.withValues(alpha: .08);
-
-  @override
-  ShapeBorder get shape => switch (type) {
-    M3EFloatingActionButtonType.small => const RoundedRectangleBorder(
-      borderRadius: BorderRadius.all(Radius.circular(16.0)),
-    ),
-    M3EFloatingActionButtonType.medium => const RoundedRectangleBorder(
-      borderRadius: BorderRadius.all(Radius.circular(20.0)),
-    ),
-    M3EFloatingActionButtonType.large => const RoundedRectangleBorder(
-      borderRadius: BorderRadius.all(Radius.circular(28.0)),
-    ),
-  };
-
-  @override
-  double get iconSize => switch (type) {
-    M3EFloatingActionButtonType.small => 24.0,
-    M3EFloatingActionButtonType.medium => 28.0,
-    M3EFloatingActionButtonType.large => 36.0,
-  };
 
   @override
   double get extendedIconLabelSpacing => switch (type) {

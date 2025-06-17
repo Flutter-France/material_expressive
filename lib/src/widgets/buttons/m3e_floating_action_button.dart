@@ -28,6 +28,7 @@ class M3EFloatingActionButton extends StatefulWidget {
     this.autofocus = false,
     this.materialTapTargetSize,
     this.enableFeedback,
+    this.isExtended = false,
     this.floatingActionButtonType = M3EFloatingActionButtonType.small,
   }) : assert(elevation == null || elevation >= 0.0),
        assert(focusElevation == null || focusElevation >= 0.0),
@@ -63,6 +64,7 @@ class M3EFloatingActionButton extends StatefulWidget {
        assert(hoverElevation == null || hoverElevation >= 0.0),
        assert(highlightElevation == null || highlightElevation >= 0.0),
        assert(disabledElevation == null || disabledElevation >= 0.0),
+       isExtended = false,
        floatingActionButtonType = M3EFloatingActionButtonType.small;
 
   const M3EFloatingActionButton.medium({
@@ -93,6 +95,7 @@ class M3EFloatingActionButton extends StatefulWidget {
        assert(hoverElevation == null || hoverElevation >= 0.0),
        assert(highlightElevation == null || highlightElevation >= 0.0),
        assert(disabledElevation == null || disabledElevation >= 0.0),
+       isExtended = false,
        floatingActionButtonType = M3EFloatingActionButtonType.medium;
 
   const M3EFloatingActionButton.large({
@@ -123,6 +126,7 @@ class M3EFloatingActionButton extends StatefulWidget {
        assert(hoverElevation == null || hoverElevation >= 0.0),
        assert(highlightElevation == null || highlightElevation >= 0.0),
        assert(disabledElevation == null || disabledElevation >= 0.0),
+       isExtended = false,
        floatingActionButtonType = M3EFloatingActionButtonType.large;
 
   /// {@template material_expressive.fab.child}
@@ -351,6 +355,8 @@ class M3EFloatingActionButton extends StatefulWidget {
   /// {@endtemplate}
   final bool? enableFeedback;
 
+  final bool isExtended;
+
   final M3EFloatingActionButtonType floatingActionButtonType;
 
   @override
@@ -452,6 +458,7 @@ class _M3EFloatingActionButtonState extends State<M3EFloatingActionButton>
           autofocus: widget.autofocus,
           materialTapTargetSize: widget.materialTapTargetSize,
           enableFeedback: widget.enableFeedback,
+          isExtended: widget.isExtended,
         ),
       ),
     );
