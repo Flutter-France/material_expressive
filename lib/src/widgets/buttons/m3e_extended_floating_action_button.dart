@@ -373,7 +373,8 @@ class _M3EExtendedFloatingActionButtonState
         floatingActionButtonTheme.extendedPadding ??
         defaults.extendedPadding;
 
-    final labelSpec = m3eTheme.motionScheme.defaultEffectsSpec;
+    final sizeAnimationSpec = m3eTheme.motionScheme.fastSpatialSpec;
+    final opacityAnimationSpec = m3eTheme.motionScheme.fastEffectsSpec;
 
     final resolvedChild = _ChildOverflowBox(
       child: Padding(
@@ -387,13 +388,20 @@ class _M3EExtendedFloatingActionButtonState
                 child: child,
               ),
             AnimatedSize(
-              duration: labelSpec.duration,
-              curve: labelSpec.curve,
+              duration: sizeAnimationSpec.duration,
+              curve: sizeAnimationSpec.curve,
               child:
                   showLabel
                       ? Padding(
-                        padding: EdgeInsets.only(left: iconLabelSpacing),
-                        child: widget.label,
+                        padding: EdgeInsets.only(
+                          left: widget.icon != null ? iconLabelSpacing : 0,
+                        ),
+                        child: AnimatedOpacity(
+                          opacity: showLabel ? 1 : 0,
+                          duration: opacityAnimationSpec.duration,
+                          curve: opacityAnimationSpec.curve,
+                          child: widget.label,
+                        ),
                       )
                       : SizedBox.shrink(),
             ),
