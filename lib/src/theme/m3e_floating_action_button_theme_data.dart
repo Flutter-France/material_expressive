@@ -43,35 +43,32 @@ class M3EFloatingActionButtonThemeData with Diagnosticable {
     );
   }
 
-  static M3EFloatingActionButtonThemeData? lerp(
-    M3EFloatingActionButtonThemeData? a,
-    M3EFloatingActionButtonThemeData? b,
+  M3EFloatingActionButtonThemeData lerp(
+    M3EFloatingActionButtonThemeData? other,
     double t,
   ) {
-    return switch ((a, b)) {
-      (null, null) => null,
-      (null, final b?) => b,
-      (final a?, null) => a,
-      (final a?, final b?) => () {
-        if (identical(a, b)) return a;
+    return switch (other) {
+      null => this,
+      final b => () {
+        if (identical(this, b)) return this;
         return M3EFloatingActionButtonThemeData(
           mediumSizeConstraints: BoxConstraints.lerp(
-            a.mediumSizeConstraints,
+            mediumSizeConstraints,
             b.mediumSizeConstraints,
             t,
           ),
           extendedSmallSizeConstraints: BoxConstraints.lerp(
-            a.extendedSmallSizeConstraints,
+            extendedSmallSizeConstraints,
             b.extendedSmallSizeConstraints,
             t,
           ),
           extendedMediumSizeConstraints: BoxConstraints.lerp(
-            a.extendedMediumSizeConstraints,
+            extendedMediumSizeConstraints,
             b.extendedMediumSizeConstraints,
             t,
           ),
           extendedLargeSizeConstraints: BoxConstraints.lerp(
-            a.extendedLargeSizeConstraints,
+            extendedLargeSizeConstraints,
             b.extendedLargeSizeConstraints,
             t,
           ),

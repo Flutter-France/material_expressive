@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:material_expressive/src/theme/m3e_floating_action_button_theme_data.dart';
 import 'package:material_expressive/src/theme/m3e_theme.dart';
 import 'package:material_expressive/src/utils/debug_check_has_expressive_material.dart';
 
@@ -333,13 +332,13 @@ class _M3EExtendedFloatingActionButtonState
 
     final sizeConstraints = switch (widget.floatingActionButtonType) {
       M3EFloatingActionButtonType.small =>
-        m3eFabTheme?.extendedSmallSizeConstraints ??
+        m3eFabTheme.extendedSmallSizeConstraints ??
             defaults.extendedSmallSizeConstraints,
       M3EFloatingActionButtonType.medium =>
-        m3eFabTheme?.extendedMediumSizeConstraints ??
+        m3eFabTheme.extendedMediumSizeConstraints ??
             defaults.extendedMediumSizeConstraints,
       M3EFloatingActionButtonType.large =>
-        m3eFabTheme?.extendedLargeSizeConstraints ??
+        m3eFabTheme.extendedLargeSizeConstraints ??
             defaults.extendedLargeSizeConstraints,
     };
 
@@ -355,9 +354,9 @@ class _M3EExtendedFloatingActionButtonState
         ),
         extensions: [
           m3eTheme.copyWith(
-            floatingActionButtonTheme: (m3eFabTheme ??
-                    M3EFloatingActionButtonThemeData())
-                .copyWith(mediumSizeConstraints: sizeConstraints),
+            floatingActionButtonTheme: m3eFabTheme.copyWith(
+              mediumSizeConstraints: sizeConstraints,
+            ),
           ),
         ],
       ),

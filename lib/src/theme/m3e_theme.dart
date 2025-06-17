@@ -5,12 +5,14 @@ import 'package:material_expressive/src/theme/motion_scheme.dart';
 import 'm3e_floating_action_button_theme_data.dart';
 
 class M3ETheme extends ThemeExtension<M3ETheme> {
-  const M3ETheme({this.floatingActionButtonTheme, this.splitButtonTheme})
-    : motionScheme = const M3EMotionScheme();
+  const M3ETheme({
+    this.floatingActionButtonTheme = const M3EFloatingActionButtonThemeData(),
+    this.splitButtonTheme = const M3ESplitButtonThemeData(),
+  }) : motionScheme = const M3EMotionScheme();
 
   final MotionScheme motionScheme;
-  final M3EFloatingActionButtonThemeData? floatingActionButtonTheme;
-  final M3ESplitButtonThemeData? splitButtonTheme;
+  final M3EFloatingActionButtonThemeData floatingActionButtonTheme;
+  final M3ESplitButtonThemeData splitButtonTheme;
 
   static M3ETheme? maybeOf(BuildContext context) {
     return Theme.of(context).extension<M3ETheme>();
@@ -42,16 +44,11 @@ class M3ETheme extends ThemeExtension<M3ETheme> {
   M3ETheme lerp(M3ETheme? other, double t) {
     if (other == null || identical(this, other)) return this;
     return M3ETheme(
-      floatingActionButtonTheme: M3EFloatingActionButtonThemeData.lerp(
-        floatingActionButtonTheme,
+      floatingActionButtonTheme: floatingActionButtonTheme.lerp(
         other.floatingActionButtonTheme,
         t,
       ),
-      splitButtonTheme: M3ESplitButtonThemeData.lerp(
-        splitButtonTheme,
-        other.splitButtonTheme,
-        t,
-      ),
+      splitButtonTheme: splitButtonTheme.lerp(other.splitButtonTheme, t),
     );
   }
 }
