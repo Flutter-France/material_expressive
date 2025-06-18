@@ -3,6 +3,8 @@ import 'package:material_expressive/material_expressive.dart';
 import 'package:material_expressive/src/theme/m3e_split_button_theme_data.dart';
 import 'package:material_expressive/src/utils/debug_check_has_expressive_material.dart';
 
+enum M3ESplitButtonType { extraSmall, small, medium, large, extraLarge }
+
 /// A [M3ESplitButton] lets a user define a button group consisting of 2 buttons.
 /// The leading button performs a primary action, and the trailing button performs
 /// a secondary action that is contextually related to the primary action.
@@ -39,6 +41,36 @@ class M3ESplitButton extends StatelessWidget {
     return Row(
       children: [leading, SizedBox(width: effectiveSpacing), trailing],
     );
+  }
+}
+
+class M3ESplitLeadingButton extends ButtonStyleButton {
+  M3ESplitLeadingButton({
+    super.key,
+    required super.onPressed,
+    super.onLongPress,
+    super.onHover,
+    super.onFocusChange,
+    super.style,
+    super.focusNode,
+    super.autofocus = false,
+    super.clipBehavior,
+    super.statesController,
+    required super.child,
+  }) : type = M3ESplitButtonType.medium;
+
+  final M3ESplitButtonType type;
+
+  @override
+  ButtonStyle defaultStyleOf(BuildContext context) {
+    // TODO: implement defaultStyleOf
+    throw UnimplementedError();
+  }
+
+  @override
+  ButtonStyle? themeStyleOf(BuildContext context) {
+    // TODO: implement themeStyleOf
+    throw UnimplementedError();
   }
 }
 
