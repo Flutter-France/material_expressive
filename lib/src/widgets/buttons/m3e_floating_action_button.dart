@@ -36,6 +36,7 @@ class M3EFloatingActionButton extends StatefulWidget {
     this.materialTapTargetSize,
     this.enableFeedback,
     this.isExtended = false,
+    this.triggerEntryAnimation = true,
     this.floatingActionButtonType = M3EFloatingActionButtonType.small,
   }) : assert(elevation == null || elevation >= 0.0),
        assert(focusElevation == null || focusElevation >= 0.0),
@@ -65,6 +66,7 @@ class M3EFloatingActionButton extends StatefulWidget {
     this.focusNode,
     this.autofocus = false,
     this.materialTapTargetSize,
+    this.triggerEntryAnimation = true,
     this.enableFeedback,
   }) : assert(elevation == null || elevation >= 0.0),
        assert(focusElevation == null || focusElevation >= 0.0),
@@ -96,6 +98,7 @@ class M3EFloatingActionButton extends StatefulWidget {
     this.focusNode,
     this.autofocus = false,
     this.materialTapTargetSize,
+    this.triggerEntryAnimation = true,
     this.enableFeedback,
   }) : assert(elevation == null || elevation >= 0.0),
        assert(focusElevation == null || focusElevation >= 0.0),
@@ -127,6 +130,7 @@ class M3EFloatingActionButton extends StatefulWidget {
     this.focusNode,
     this.autofocus = false,
     this.materialTapTargetSize,
+    this.triggerEntryAnimation = true,
     this.enableFeedback,
   }) : assert(elevation == null || elevation >= 0.0),
        assert(focusElevation == null || focusElevation >= 0.0),
@@ -363,6 +367,7 @@ class M3EFloatingActionButton extends StatefulWidget {
   final bool? enableFeedback;
 
   final bool isExtended;
+  final bool triggerEntryAnimation;
 
   final M3EFloatingActionButtonType floatingActionButtonType;
 
@@ -382,9 +387,11 @@ class _M3EFloatingActionButtonState extends State<M3EFloatingActionButton>
   void initState() {
     super.initState();
 
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      controller.forward();
-    });
+    if (widget.triggerEntryAnimation) {
+      WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+        controller.forward();
+      });
+    }
   }
 
   @override
@@ -396,7 +403,11 @@ class _M3EFloatingActionButtonState extends State<M3EFloatingActionButton>
     final spec = motion.fastSpatialSpec;
 
     if (!controllerInitialized) {
-      controller = AnimationController(vsync: this, duration: spec.duration);
+      controller = AnimationController(
+        vsync: this,
+        duration: spec.duration,
+        value: widget.triggerEntryAnimation ? 0.0 : 1.0,
+      );
       controllerInitialized = true;
 
       appearanceAnimation = CurvedAnimation(

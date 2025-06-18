@@ -12,6 +12,8 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:material_expressive_widgetbook/buttons/floating_action_button.dart'
     as _i2;
+import 'package:material_expressive_widgetbook/buttons/floating_action_button_menu.dart'
+    as _i3;
 import 'package:widgetbook/widgetbook.dart' as _i1;
 
 final directories = <_i1.WidgetbookNode>[
@@ -33,6 +35,13 @@ final directories = <_i1.WidgetbookNode>[
             useCase: _i1.WidgetbookUseCase(
               name: 'FAB',
               builder: _i2.buildFloatingActionButton,
+            ),
+          ),
+          _i1.WidgetbookLeafComponent(
+            name: 'M3EFloatingActionButtonMenu',
+            useCase: _i1.WidgetbookUseCase(
+              name: 'FAB Menu',
+              builder: _i3.buildFloatingActionButtonMenu,
             ),
           ),
         ],
