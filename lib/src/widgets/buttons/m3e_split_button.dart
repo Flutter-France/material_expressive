@@ -59,6 +59,76 @@ class M3ESplitLeadingButton extends ButtonStyleButton {
     required super.child,
   }) : type = M3ESplitButtonType.medium;
 
+  M3ESplitLeadingButton.extraSmall({
+    super.key,
+    required super.onPressed,
+    super.onLongPress,
+    super.onHover,
+    super.onFocusChange,
+    super.style,
+    super.focusNode,
+    super.autofocus = false,
+    super.clipBehavior,
+    super.statesController,
+    required super.child,
+  }) : type = M3ESplitButtonType.extraSmall;
+
+  M3ESplitLeadingButton.small({
+    super.key,
+    required super.onPressed,
+    super.onLongPress,
+    super.onHover,
+    super.onFocusChange,
+    super.style,
+    super.focusNode,
+    super.autofocus = false,
+    super.clipBehavior,
+    super.statesController,
+    required super.child,
+  }) : type = M3ESplitButtonType.small;
+
+  M3ESplitLeadingButton.medium({
+    super.key,
+    required super.onPressed,
+    super.onLongPress,
+    super.onHover,
+    super.onFocusChange,
+    super.style,
+    super.focusNode,
+    super.autofocus = false,
+    super.clipBehavior,
+    super.statesController,
+    required super.child,
+  }) : type = M3ESplitButtonType.medium;
+
+  M3ESplitLeadingButton.large({
+    super.key,
+    required super.onPressed,
+    super.onLongPress,
+    super.onHover,
+    super.onFocusChange,
+    super.style,
+    super.focusNode,
+    super.autofocus = false,
+    super.clipBehavior,
+    super.statesController,
+    required super.child,
+  }) : type = M3ESplitButtonType.large;
+
+  M3ESplitLeadingButton.extraLarge({
+    super.key,
+    required super.onPressed,
+    super.onLongPress,
+    super.onHover,
+    super.onFocusChange,
+    super.style,
+    super.focusNode,
+    super.autofocus = false,
+    super.clipBehavior,
+    super.statesController,
+    required super.child,
+  }) : type = M3ESplitButtonType.extraLarge;
+
   final M3ESplitButtonType type;
 
   @override
