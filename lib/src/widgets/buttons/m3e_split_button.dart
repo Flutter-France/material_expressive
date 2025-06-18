@@ -139,8 +139,20 @@ class M3ESplitLeadingButton extends ButtonStyleButton {
 
   @override
   ButtonStyle? themeStyleOf(BuildContext context) {
-    // TODO: implement themeStyleOf
-    throw UnimplementedError();
+    final M3ESplitButtonThemeData? theme =
+        Theme.of(context).extension<M3ETheme>()?.splitButtonTheme;
+
+    if (theme == null) {
+      return null;
+    }
+
+    return switch (type) {
+      M3ESplitButtonType.extraSmall => theme.extraSmallButtonStyle,
+      M3ESplitButtonType.small => theme.smallButtonStyle,
+      M3ESplitButtonType.medium => theme.mediumButtonStyle,
+      M3ESplitButtonType.large => theme.largeButtonStyle,
+      M3ESplitButtonType.extraLarge => theme.extraLargeButtonStyle,
+    }?.leading;
   }
 }
 
