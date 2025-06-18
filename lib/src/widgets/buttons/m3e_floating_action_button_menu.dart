@@ -24,7 +24,17 @@ class M3EFloatingActionButtonMenu extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return expanded ? _CloseButton(onPressed: onClosePressed) : button;
+    final m3eTheme = M3ETheme.of(context);
+    final motionScheme = m3eTheme.motionScheme;
+
+    final morphSpec = motionScheme.fastSpatialSpec;
+
+    return AnimatedSize(
+      duration: morphSpec.duration,
+      curve: morphSpec.curve,
+      alignment: Alignment.topRight,
+      child: expanded ? _CloseButton(onPressed: onClosePressed) : button,
+    );
   }
 }
 
@@ -47,12 +57,16 @@ class _CloseButton extends StatelessWidget {
 
 class M3EFloatingActionButtonMenuItem {
   const M3EFloatingActionButtonMenuItem({
-    required this.label,
+    required this.text,
     required this.icon,
     required this.onPressed,
+    this.containerColor,
+    this.contentColor,
   });
 
-  final String label;
+  final Widget text;
   final Widget icon;
-  final VoidCallback? onPressed;
+  final VoidCallback onPressed;
+  final Color? containerColor;
+  final Color? contentColor;
 }

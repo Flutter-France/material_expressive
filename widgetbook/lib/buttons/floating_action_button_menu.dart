@@ -26,7 +26,7 @@ Widget buildFloatingActionButtonMenu(BuildContext context) {
     ),
     items: [
       M3EFloatingActionButtonMenuItem(
-        label: 'First',
+        text: Text('First'),
         icon: Icon(Icons.star),
         onPressed: () {},
       ),
