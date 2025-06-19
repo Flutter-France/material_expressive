@@ -133,8 +133,15 @@ class M3ESplitLeadingButton extends ButtonStyleButton {
 
   @override
   ButtonStyle defaultStyleOf(BuildContext context) {
-    // TODO: implement defaultStyleOf
-    throw UnimplementedError();
+    return switch (type) {
+      M3ESplitButtonType.extraSmall =>
+        _M3ESplitButtonDefaults.extraSmallButtonStyle,
+      M3ESplitButtonType.small => _M3ESplitButtonDefaults.smallButtonStyle,
+      M3ESplitButtonType.medium => _M3ESplitButtonDefaults.mediumButtonStyle,
+      M3ESplitButtonType.large => _M3ESplitButtonDefaults.largeButtonStyle,
+      M3ESplitButtonType.extraLarge =>
+        _M3ESplitButtonDefaults.extraLargeButtonStyle,
+    }.leading!;
   }
 
   @override
@@ -159,4 +166,69 @@ class M3ESplitLeadingButton extends ButtonStyleButton {
 /// Default values for [M3ESplitButton]
 class _M3ESplitButtonDefaults {
   static const spacing = 2.0;
+
+  static final M3ESplitButtonStyle extraSmallButtonStyle = M3ESplitButtonStyle(
+    leading: ElevatedButton.styleFrom(
+      minimumSize: Size(0, 32),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.horizontal(
+          left: Radius.circular(16),
+          right: Radius.circular(4),
+        ),
+      ),
+    ),
+    trailing: ElevatedButton.styleFrom(),
+  );
+
+  static final M3ESplitButtonStyle smallButtonStyle = M3ESplitButtonStyle(
+    leading: ElevatedButton.styleFrom(
+      minimumSize: Size(0, 40),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.horizontal(
+          left: Radius.circular(20),
+          right: Radius.circular(4),
+        ),
+      ),
+    ),
+    trailing: ElevatedButton.styleFrom(),
+  );
+
+  static final M3ESplitButtonStyle mediumButtonStyle = M3ESplitButtonStyle(
+    leading: ElevatedButton.styleFrom(
+      minimumSize: Size(0, 56),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.horizontal(
+          left: Radius.circular(28),
+          right: Radius.circular(4),
+        ),
+      ),
+    ),
+    trailing: ElevatedButton.styleFrom(),
+  );
+
+  static final M3ESplitButtonStyle largeButtonStyle = M3ESplitButtonStyle(
+    leading: ElevatedButton.styleFrom(
+      minimumSize: Size(0, 96),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.horizontal(
+          left: Radius.circular(48),
+          right: Radius.circular(8),
+        ),
+      ),
+    ),
+    trailing: ElevatedButton.styleFrom(),
+  );
+
+  static final M3ESplitButtonStyle extraLargeButtonStyle = M3ESplitButtonStyle(
+    leading: ElevatedButton.styleFrom(
+      minimumSize: Size(0, 136),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.horizontal(
+          left: Radius.circular(68),
+          right: Radius.circular(12),
+        ),
+      ),
+    ),
+    trailing: ElevatedButton.styleFrom(),
+  );
 }
