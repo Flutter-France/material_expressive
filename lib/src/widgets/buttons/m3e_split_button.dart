@@ -1,7 +1,7 @@
-import 'package:material_ui/material_ui.dart';
 import 'package:material_expressive/material_expressive.dart';
 import 'package:material_expressive/src/theme/m3e_split_button_theme_data.dart';
 import 'package:material_expressive/src/utils/debug_check_has_expressive_material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// A [M3ESplitButton] lets a user define a button group consisting of 2 buttons.
 /// The leading button performs a primary action, and the trailing button performs
@@ -31,14 +31,13 @@ class M3ESplitButton extends StatelessWidget {
   Widget build(BuildContext context) {
     debugCheckHasExpressiveMaterial(context);
 
-    final M3ESplitButtonThemeData? theme =
-        Theme.of(context).extension<M3ETheme>()?.splitButtonTheme;
+    final M3ESplitButtonThemeData? theme = Theme.of(
+      context,
+    ).extension<M3ETheme>()?.splitButtonTheme;
     final effectiveSpacing =
         spacing ?? theme?.spacing ?? _M3ESplitButtonDefaults.spacing;
 
-    return Row(
-      children: [leading, SizedBox(width: effectiveSpacing), trailing],
-    );
+    return Row(spacing: effectiveSpacing, children: [leading, trailing]);
   }
 }
 

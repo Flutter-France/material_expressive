@@ -2,20 +2,18 @@ import 'dart:math' as math;
 
 import 'package:flutter/rendering.dart';
 import 'package:material_ui/material_ui.dart';
-import 'package:motor/motor.dart';
+import 'package:material_expressive/src/theme/animation_spec.dart';
+import 'package:material_expressive/src/utils/spring_builder.dart';
 
 enum ButtonGroupMode { standard, connected }
 
 enum ButtonSize { xSmall, small, medium, large, xLarge }
 
-/// Fraction of its own width a pressed button grows by (Compose default).
-const _expandedRatio = .15;
-
 /// Gap between buttons of a [ButtonGroupMode.connected] group, for all sizes.
 const _connectedSpacing = 2.0;
 
-const _spatialMotion = MaterialSpringMotion.expressiveSpatialFast();
-const _effectsMotion = MaterialSpringMotion.expressiveEffectsFast();
+const _spatialMotion = SpringSpec.expressiveSpatialFast;
+const _effectsMotion = SpringSpec.expressiveEffectsFast;
 
 typedef _Tokens = ({
   double height,
@@ -27,6 +25,7 @@ typedef _Tokens = ({
   double spacing,
   double innerRadius,
   double innerPressedRadius,
+  double connectedMinWidth,
 });
 
 // shortcut: values from the M3 Expressive button / button group kit; only the
@@ -42,6 +41,7 @@ _Tokens _tokensFor(ButtonSize size) => switch (size) {
     spacing: 18,
     innerRadius: 4,
     innerPressedRadius: 2,
+    connectedMinWidth: 48,
   ),
   .small => (
     height: 40,
@@ -53,6 +53,7 @@ _Tokens _tokensFor(ButtonSize size) => switch (size) {
     spacing: 12,
     innerRadius: 8,
     innerPressedRadius: 4,
+    connectedMinWidth: 48,
   ),
   .medium => (
     height: 56,
@@ -64,6 +65,7 @@ _Tokens _tokensFor(ButtonSize size) => switch (size) {
     spacing: 8,
     innerRadius: 8,
     innerPressedRadius: 4,
+    connectedMinWidth: 0,
   ),
   .large => (
     height: 96,
@@ -75,6 +77,7 @@ _Tokens _tokensFor(ButtonSize size) => switch (size) {
     spacing: 8,
     innerRadius: 16,
     innerPressedRadius: 12,
+    connectedMinWidth: 0,
   ),
   .xLarge => (
     height: 136,
@@ -86,6 +89,7 @@ _Tokens _tokensFor(ButtonSize size) => switch (size) {
     spacing: 8,
     innerRadius: 20,
     innerPressedRadius: 16,
+    connectedMinWidth: 0,
   ),
 };
 
@@ -97,22 +101,6 @@ TextStyle? _labelStyleFor(ButtonSize size, TextTheme textTheme) =>
       .xLarge => textTheme.headlineLarge,
     };
 
-final _borderRadiusConverter = MotionConverter<BorderRadius>.custom(
-  normalize: (r) => [
-    r.topLeft.x,
-    r.topRight.x,
-    r.bottomLeft.x,
-    r.bottomRight.x,
-  ],
-  // Springs can overshoot below zero.
-  denormalize: (v) => BorderRadius.only(
-    topLeft: Radius.circular(math.max(0, v[0])),
-    topRight: Radius.circular(math.max(0, v[1])),
-    bottomLeft: Radius.circular(math.max(0, v[2])),
-    bottomRight: Radius.circular(math.max(0, v[3])),
-  ),
-);
-
 /// Material 3 Expressive button group.
 ///
 /// * [ButtonGroupMode.standard]: spaced buttons, round when unselected,
@@ -120,7 +108,8 @@ final _borderRadiusConverter = MotionConverter<BorderRadius>.custom(
 /// * [ButtonGroupMode.connected]: tightly packed buttons with round outer
 ///   corners, becoming fully round when selected.
 ///
-/// In both modes the pressed button grows and its neighbours shrink.
+/// In standard mode the pressed button grows and its neighbours shrink, each
+/// by at most its horizontal padding. Connected buttons never change width.
 class M3EButtonGroup<T> extends StatefulWidget {
   const M3EButtonGroup({
     required this.items,
@@ -131,8 +120,10 @@ class M3EButtonGroup<T> extends StatefulWidget {
     this.showSelectedIcon = true,
     this.mode = ButtonGroupMode.standard,
     this.size = ButtonSize.medium,
+    this.expandedRatio = 0.15,
     super.key,
   }) : assert(items.length > 0),
+       assert(expandedRatio >= 0),
        assert(
          selected.length > 0 ||
              emptySelectionAllowed ||
@@ -154,6 +145,11 @@ class M3EButtonGroup<T> extends StatefulWidget {
   final bool showSelectedIcon;
   final ButtonGroupMode mode;
   final ButtonSize size;
+
+  /// Fraction of its own width a pressed button grows by in
+  /// [ButtonGroupMode.standard]; neighbours shrink by the same total.
+  /// 0 disables the effect, 1 doubles the pressed button.
+  final double expandedRatio;
 
   @override
   State<M3EButtonGroup<T>> createState() => _M3EButtonGroupState<T>();
@@ -213,17 +209,6 @@ class _M3EButtonGroupState<T> extends State<M3EButtonGroup<T>> {
         ? kMinInteractiveDimension
         : 0.0;
     final selectable = widget.onSelectionChanged != null;
-
-    // shortcut: neighbours shrink relative to their own width, so the group
-    // width is only preserved for equal-width items. Measure siblings in a
-    // custom multi-child layout if unequal widths make the group jitter.
-    double widthFactor(int i) {
-      if (pressedIndex == null) return 1;
-      if (i == pressedIndex) return 1 + _expandedRatio;
-      if ((i - pressedIndex).abs() != 1) return 1;
-      final pressedIsEdge = pressedIndex == 0 || pressedIndex == last;
-      return 1 - (pressedIsEdge ? _expandedRatio : _expandedRatio / 2);
-    }
 
     BorderRadius radiusFor(
       int i, {
@@ -291,18 +276,18 @@ class _M3EButtonGroupState<T> extends State<M3EButtonGroup<T>> {
         ),
       );
 
-      Widget button = MotionBuilder<Color>(
+      Widget button = SpringBuilder<Color>(
         value: background,
-        motion: _effectsMotion,
-        converter: MotionConverter.colorRgb,
-        builder: (context, color, child) => MotionBuilder<BorderRadius>(
+        spring: _effectsMotion,
+        converter: colorSpringConverter,
+        builder: (context, color, child) => SpringBuilder<BorderRadius>(
           value: radiusFor(
             i,
             selected: itemSelected,
             pressed: i == pressedIndex,
           ),
-          motion: _spatialMotion,
-          converter: _borderRadiusConverter,
+          spring: _spatialMotion,
+          converter: borderRadiusSpringConverter,
           builder: (context, radius, child) => Material(
             color: color,
             shape: RoundedRectangleBorder(borderRadius: radius),
@@ -315,21 +300,18 @@ class _M3EButtonGroupState<T> extends State<M3EButtonGroup<T>> {
         child: InkWell(
           onTap: onTap,
           onHighlightChanged: (pressed) => _handleHighlightChanged(i, pressed),
-          // Neighbours shrink into their padding; never paint overflow.
-          child: OverflowBox(maxWidth: double.infinity, child: content),
+          // Counts as the natural width, so presses scale from at least this.
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              minWidth: connected ? tokens.connectedMinWidth : 0,
+            ),
+            // Neighbours shrink into their padding; never paint overflow.
+            child: OverflowBox(maxWidth: double.infinity, child: content),
+          ),
         ),
       );
 
-      button = SizedBox(
-        height: tokens.height,
-        child: SingleMotionBuilder(
-          value: widthFactor(i),
-          motion: _spatialMotion,
-          builder: (context, factor, child) =>
-              _WidthFactor(factor: factor, child: child!),
-          child: button,
-        ),
-      );
+      button = SizedBox(height: tokens.height, child: button);
 
       // Extend the hit area of small sizes to the minimum touch target. The
       // InkWell is deeper in the tree, so it wins taps on the visible button.
@@ -351,20 +333,30 @@ class _M3EButtonGroupState<T> extends State<M3EButtonGroup<T>> {
         button = Tooltip(message: tooltip, child: button);
       }
 
-      return MergeSemantics(
-        child: Semantics(
-          selected: selectable ? itemSelected : null,
-          inMutuallyExclusiveGroup: selectable && !widget.multiSelectionEnabled
-              ? true
-              : null,
-          child: button,
+      return SpringBuilder<double>(
+        value: !connected && i == pressedIndex ? 1.0 : 0.0,
+        spring: _spatialMotion,
+        converter: doubleSpringConverter,
+        builder: (context, progress, child) =>
+            _GroupItem(pressProgress: progress, child: child!),
+        child: MergeSemantics(
+          child: Semantics(
+            button: true,
+            enabled: enabled,
+            checked: selectable ? itemSelected : null,
+            inMutuallyExclusiveGroup:
+                selectable && !widget.multiSelectionEnabled ? true : null,
+            child: button,
+          ),
         ),
       );
     }
 
-    return Row(
-      mainAxisSize: .min,
+    return _GroupLayout(
       spacing: connected ? _connectedSpacing : tokens.spacing,
+      expandedRatio: widget.expandedRatio,
+      compressionLimit: tokens.padding,
+      textDirection: textDirection,
       children: [for (var i = 0; i < items.length; i++) buttonFor(i)],
     );
   }
@@ -404,55 +396,225 @@ class ButtonGroupItem<T> {
   final bool enabled;
 }
 
-/// Sizes its child to [factor] times the child's natural width.
-class _WidthFactor extends SingleChildRenderObjectWidget {
-  const _WidthFactor({required this.factor, required super.child});
+class _GroupParentData extends ContainerBoxParentData<RenderBox> {
+  /// 0 at rest, 1 fully pressed; springs may overshoot.
+  double pressProgress = 0;
+}
 
-  final double factor;
+class _GroupItem extends ParentDataWidget<_GroupParentData> {
+  const _GroupItem({required this.pressProgress, required super.child});
+
+  final double pressProgress;
 
   @override
-  _RenderWidthFactor createRenderObject(BuildContext context) =>
-      _RenderWidthFactor(factor);
+  void applyParentData(RenderObject renderObject) {
+    final data = renderObject.parentData! as _GroupParentData;
+    if (data.pressProgress == pressProgress) return;
+    data.pressProgress = pressProgress;
+    renderObject.parent?.markNeedsLayout();
+  }
+
+  @override
+  Type get debugTypicalAncestorWidgetClass => _GroupLayout;
+}
+
+/// Lays buttons out in a row. A pressed button grows by [expandedRatio] of
+/// its natural width and takes that width from its neighbours (all of it from
+/// the single neighbour of an edge button, half from each otherwise), so the
+/// group keeps its width. A neighbour gives at most [compressionLimit]; past
+/// that the group grows, as in Compose.
+class _GroupLayout extends MultiChildRenderObjectWidget {
+  const _GroupLayout({
+    required this.spacing,
+    required this.expandedRatio,
+    required this.compressionLimit,
+    required this.textDirection,
+    required super.children,
+  });
+
+  final double spacing;
+  final double expandedRatio;
+  final double compressionLimit;
+  final TextDirection textDirection;
+
+  @override
+  _RenderGroupLayout createRenderObject(BuildContext context) =>
+      _RenderGroupLayout(
+        spacing: spacing,
+        expandedRatio: expandedRatio,
+        compressionLimit: compressionLimit,
+        textDirection: textDirection,
+      );
 
   @override
   void updateRenderObject(
     BuildContext context,
-    _RenderWidthFactor renderObject,
-  ) => renderObject.factor = factor;
+    _RenderGroupLayout renderObject,
+  ) => renderObject
+    ..spacing = spacing
+    ..expandedRatio = expandedRatio
+    ..compressionLimit = compressionLimit
+    ..textDirection = textDirection;
 }
 
-class _RenderWidthFactor extends RenderProxyBox {
-  _RenderWidthFactor(this._factor);
+class _RenderGroupLayout extends RenderBox
+    with
+        ContainerRenderObjectMixin<RenderBox, _GroupParentData>,
+        RenderBoxContainerDefaultsMixin<RenderBox, _GroupParentData> {
+  _RenderGroupLayout({
+    required double spacing,
+    required double expandedRatio,
+    required double compressionLimit,
+    required TextDirection textDirection,
+  }) : _spacing = spacing,
+       _expandedRatio = expandedRatio,
+       _compressionLimit = compressionLimit,
+       _textDirection = textDirection;
 
-  double _factor;
-  set factor(double value) {
-    if (value == _factor) return;
-    _factor = value;
+  double _spacing;
+  set spacing(double value) {
+    if (value == _spacing) return;
+    _spacing = value;
+    markNeedsLayout();
+  }
+
+  double _expandedRatio;
+  set expandedRatio(double value) {
+    if (value == _expandedRatio) return;
+    _expandedRatio = value;
+    markNeedsLayout();
+  }
+
+  double _compressionLimit;
+  set compressionLimit(double value) {
+    if (value == _compressionLimit) return;
+    _compressionLimit = value;
+    markNeedsLayout();
+  }
+
+  TextDirection _textDirection;
+  set textDirection(TextDirection value) {
+    if (value == _textDirection) return;
+    _textDirection = value;
     markNeedsLayout();
   }
 
   @override
-  double computeMinIntrinsicWidth(double height) =>
-      super.computeMaxIntrinsicWidth(height) * _factor;
+  void setupParentData(RenderBox child) {
+    if (child.parentData is! _GroupParentData) {
+      child.parentData = _GroupParentData();
+    }
+  }
+
+  /// Width of each child, in child order.
+  List<double> _widths() {
+    final children = getChildrenAsList();
+    final last = children.length - 1;
+    final natural = [
+      for (final c in children) c.getMaxIntrinsicWidth(double.infinity),
+    ];
+    final expansion = [
+      for (var i = 0; i <= last; i++)
+        natural[i] *
+            _expandedRatio *
+            (children[i].parentData! as _GroupParentData).pressProgress,
+    ];
+    double given(int j) =>
+        j == 0 || j == last ? expansion[j] : expansion[j] / 2;
+    return [
+      for (var i = 0; i <= last; i++)
+        math.max(
+          0,
+          natural[i] +
+              expansion[i] -
+              math.min(
+                _compressionLimit,
+                (i > 0 ? given(i - 1) : 0) + (i < last ? given(i + 1) : 0),
+              ),
+        ),
+    ];
+  }
+
+  double _totalWidth(List<double> widths) =>
+      widths.fold(0.0, (a, b) => a + b) +
+      _spacing * math.max(0, widths.length - 1);
+
+  BoxConstraints _childConstraints(double width, BoxConstraints constraints) =>
+      BoxConstraints(
+        minWidth: width,
+        maxWidth: width,
+        maxHeight: constraints.maxHeight,
+      );
 
   @override
-  double computeMaxIntrinsicWidth(double height) =>
-      super.computeMaxIntrinsicWidth(height) * _factor;
+  double computeMinIntrinsicWidth(double height) => _totalWidth(_widths());
 
   @override
-  Size computeDryLayout(BoxConstraints constraints) =>
-      constraints.constrain(Size(_width(constraints), constraints.maxHeight));
+  double computeMaxIntrinsicWidth(double height) => _totalWidth(_widths());
 
-  double _width(BoxConstraints constraints) => constraints.constrainWidth(
-    child!.getMaxIntrinsicWidth(constraints.maxHeight) * _factor,
-  );
+  @override
+  double computeMinIntrinsicHeight(double width) =>
+      _maxChild((c) => c.getMinIntrinsicHeight(double.infinity));
+
+  @override
+  double computeMaxIntrinsicHeight(double width) =>
+      _maxChild((c) => c.getMaxIntrinsicHeight(double.infinity));
+
+  double _maxChild(double Function(RenderBox) measure) =>
+      getChildrenAsList().map(measure).fold(0.0, math.max);
+
+  @override
+  Size computeDryLayout(BoxConstraints constraints) {
+    final widths = _widths();
+    final children = getChildrenAsList();
+    var height = 0.0;
+    for (var i = 0; i < children.length; i++) {
+      height = math.max(
+        height,
+        children[i]
+            .getDryLayout(_childConstraints(widths[i], constraints))
+            .height,
+      );
+    }
+    return constraints.constrain(Size(_totalWidth(widths), height));
+  }
 
   @override
   void performLayout() {
-    child!.layout(
-      constraints.tighten(width: _width(constraints)),
-      parentUsesSize: true,
-    );
-    size = child!.size;
+    final widths = _widths();
+    final children = getChildrenAsList();
+    var height = 0.0;
+    for (var i = 0; i < children.length; i++) {
+      children[i].layout(
+        _childConstraints(widths[i], constraints),
+        parentUsesSize: true,
+      );
+      height = math.max(height, children[i].size.height);
+    }
+
+    final ordered = _textDirection == TextDirection.rtl
+        ? children.reversed
+        : children;
+    var x = 0.0;
+    for (final child in ordered) {
+      (child.parentData! as _GroupParentData).offset = Offset(
+        x,
+        (height - child.size.height) / 2,
+      );
+      x += child.size.width + _spacing;
+    }
+    size = constraints.constrain(Size(_totalWidth(widths), height));
   }
+
+  @override
+  double? computeDistanceToActualBaseline(TextBaseline baseline) =>
+      defaultComputeDistanceToHighestActualBaseline(baseline);
+
+  @override
+  bool hitTestChildren(BoxHitTestResult result, {required Offset position}) =>
+      defaultHitTestChildren(result, position: position);
+
+  @override
+  void paint(PaintingContext context, Offset offset) =>
+      defaultPaint(context, offset);
 }

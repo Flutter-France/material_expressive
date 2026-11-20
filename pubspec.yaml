@@ -11,9 +11,9 @@ dependencies:
   flutter:
     sdk: flutter
   material_ui: ^1.11.1
-  motor: ^1.1.0
   # path: ^1.8.0
 
 dev_dependencies:
   lints: ^6.1.0
-  test: ^1.33.0
+  flutter_test:
+    sdk: flutter

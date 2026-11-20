@@ -38,6 +38,11 @@ Widget buildButtonGroup(BuildContext context) {
       min: 2,
       max: _items.length,
     ),
+    expandedRatio: knobs.double.slider(
+      label: 'Expanded ratio',
+      initialValue: 0.15,
+      max: 1,
+    ),
     multiSelectionEnabled: knobs.boolean(label: 'Multi selection'),
     emptySelectionAllowed: knobs.boolean(label: 'Empty selection allowed'),
     showSelectedIcon: knobs.boolean(
@@ -59,6 +64,7 @@ class _ButtonGroupUseCase extends StatefulWidget {
     required this.emptySelectionAllowed,
     required this.showSelectedIcon,
     required this.enabled,
+    required this.expandedRatio,
   });
 
   final ButtonGroupMode mode;
@@ -69,6 +75,7 @@ class _ButtonGroupUseCase extends StatefulWidget {
   final bool emptySelectionAllowed;
   final bool showSelectedIcon;
   final bool enabled;
+  final double expandedRatio;
 
   @override
   State<_ButtonGroupUseCase> createState() => _ButtonGroupUseCaseState();
@@ -96,6 +103,7 @@ class _ButtonGroupUseCaseState extends State<_ButtonGroupUseCase> {
         multiSelectionEnabled: widget.multiSelectionEnabled,
         emptySelectionAllowed: widget.emptySelectionAllowed,
         showSelectedIcon: widget.showSelectedIcon,
+        expandedRatio: widget.expandedRatio,
         selected: selected,
         onSelectionChanged: (s) => setState(() => _selected = s),
         items: [
