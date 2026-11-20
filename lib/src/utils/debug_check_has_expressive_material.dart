@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:material_expressive/src/theme/m3e_theme.dart';
 
 bool debugCheckHasExpressiveMaterial(BuildContext context) {

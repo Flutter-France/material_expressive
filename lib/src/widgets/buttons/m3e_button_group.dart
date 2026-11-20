@@ -9,7 +9,7 @@ enum ButtonGroupMode { standard, connected }
 enum ButtonSize { xSmall, small, medium, large, xLarge }
 
 /// Fraction of its own width a pressed button grows by (Compose default).
-const _expandedRatio = 0.15;
+const _expandedRatio = .15;
 
 /// Gap between buttons of a [ButtonGroupMode.connected] group, for all sizes.
 const _connectedSpacing = 2.0;

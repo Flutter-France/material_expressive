@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:material_expressive/material_expressive.dart';
 import 'package:material_expressive/src/theme/m3e_split_button_theme_data.dart';
 import 'package:material_expressive/src/utils/debug_check_has_expressive_material.dart';

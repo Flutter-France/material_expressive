@@ -1,6 +1,6 @@
-import 'package:flutter/material.dart';
 import 'package:material_expressive/src/theme/m3e_split_button_theme_data.dart';
 import 'package:material_expressive/src/theme/motion_scheme.dart';
+import 'package:material_ui/material_ui.dart';
 
 import 'm3e_floating_action_button_theme_data.dart';
 
