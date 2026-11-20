@@ -10,30 +10,52 @@
 // **************************************************************************
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'package:material_expressive_widgetbook/buttons/floating_action_button.dart'
-    as _i2;
-import 'package:widgetbook/widgetbook.dart' as _i1;
 
-final directories = <_i1.WidgetbookNode>[
-  _i1.WidgetbookFolder(
+import 'package:material_expressive_widgetbook/buttons/button_group.dart'
+    as _material_expressive_widgetbook_buttons_button_group;
+import 'package:material_expressive_widgetbook/buttons/floating_action_button.dart'
+    as _material_expressive_widgetbook_buttons_floating_action_button;
+import 'package:widgetbook/widgetbook.dart' as _widgetbook;
+
+final directories = <_widgetbook.WidgetbookNode>[
+  _widgetbook.WidgetbookFolder(
     name: 'widgets',
     children: [
-      _i1.WidgetbookFolder(
+      _widgetbook.WidgetbookFolder(
         name: 'buttons',
         children: [
-          _i1.WidgetbookLeafComponent(
-            name: 'M3EExtendedFloatingActionButton',
-            useCase: _i1.WidgetbookUseCase(
-              name: 'Extended FAB',
-              builder: _i2.buildExtendedFloatingActionButton,
-            ),
+          _widgetbook.WidgetbookComponent(
+            name: 'M3EButtonGroup',
+            useCases: [
+              _widgetbook.WidgetbookUseCase(
+                name: 'Button group',
+                builder:
+                    _material_expressive_widgetbook_buttons_button_group
+                        .buildButtonGroup,
+              ),
+            ],
           ),
-          _i1.WidgetbookLeafComponent(
+          _widgetbook.WidgetbookComponent(
+            name: 'M3EExtendedFloatingActionButton',
+            useCases: [
+              _widgetbook.WidgetbookUseCase(
+                name: 'Extended FAB',
+                builder:
+                    _material_expressive_widgetbook_buttons_floating_action_button
+                        .buildExtendedFloatingActionButton,
+              ),
+            ],
+          ),
+          _widgetbook.WidgetbookComponent(
             name: 'M3EFloatingActionButton',
-            useCase: _i1.WidgetbookUseCase(
-              name: 'FAB',
-              builder: _i2.buildFloatingActionButton,
-            ),
+            useCases: [
+              _widgetbook.WidgetbookUseCase(
+                name: 'FAB',
+                builder:
+                    _material_expressive_widgetbook_buttons_floating_action_button
+                        .buildFloatingActionButton,
+              ),
+            ],
           ),
         ],
       ),

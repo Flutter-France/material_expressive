@@ -1,7 +1,7 @@
-import 'package:material_ui/material_ui.dart';
 import 'package:flutter/rendering.dart';
 import 'package:material_expressive/src/theme/m3e_theme.dart';
 import 'package:material_expressive/src/utils/debug_check_has_expressive_material.dart';
+import 'package:material_ui/material_ui.dart';
 
 import 'm3e_floating_action_button.dart';
 
@@ -367,25 +367,24 @@ class _M3EExtendedFloatingActionButtonState
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              if (widget.icon case final icon?) icon,
+              ?widget.icon,
               AnimatedSize(
                 duration: expandAnimationSpec.duration,
                 reverseDuration: collapseAnimationSpec.duration,
                 curve: expandAnimationSpec.curve,
-                child:
-                    showLabel
-                        ? Padding(
-                          padding: EdgeInsets.only(
-                            left: widget.icon != null ? iconLabelSpacing : 0,
-                          ),
-                          child: AnimatedOpacity(
-                            opacity: showLabel ? 1 : 0,
-                            duration: opacityAnimationSpec.duration,
-                            curve: opacityAnimationSpec.curve,
-                            child: widget.label,
-                          ),
-                        )
-                        : SizedBox.shrink(),
+                child: showLabel
+                    ? Padding(
+                        padding: EdgeInsets.only(
+                          left: widget.icon != null ? iconLabelSpacing : 0,
+                        ),
+                        child: AnimatedOpacity(
+                          opacity: showLabel ? 1 : 0,
+                          duration: opacityAnimationSpec.duration,
+                          curve: opacityAnimationSpec.curve,
+                          child: widget.label,
+                        ),
+                      )
+                    : SizedBox.shrink(),
               ),
             ],
           ),

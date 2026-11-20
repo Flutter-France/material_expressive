@@ -5,7 +5,7 @@ import 'package:widgetbook_annotation/widgetbook_annotation.dart' as widgetbook;
 
 @widgetbook.UseCase(name: 'FAB', type: M3EFloatingActionButton)
 Widget buildFloatingActionButton(BuildContext context) {
-  final size = context.knobs.list<M3EFloatingActionButtonType>(
+  final size = context.knobs.object.dropdown<M3EFloatingActionButtonType>(
     label: 'Size',
     options: M3EFloatingActionButtonType.values,
     labelBuilder: (s) => s.name,
@@ -13,7 +13,7 @@ Widget buildFloatingActionButton(BuildContext context) {
 
   final enabled = context.knobs.boolean(label: 'Enabled', initialValue: true);
 
-  final style = context.knobs.list<_FABStyle>(
+  final style = context.knobs.object.dropdown<_FABStyle>(
     label: 'Style',
     options: _FABStyle.values,
     labelBuilder: (s) => s.label,
@@ -33,12 +33,12 @@ Widget buildFloatingActionButton(BuildContext context) {
 Widget buildExtendedFloatingActionButton(BuildContext context) {
   final theme = Theme.of(context);
 
-  final size = context.knobs.list<M3EFloatingActionButtonType>(
+  final size = context.knobs.object.dropdown<M3EFloatingActionButtonType>(
     label: 'Size',
     options: M3EFloatingActionButtonType.values,
     labelBuilder: (s) => s.name,
   );
-  final style = context.knobs.list<_FABStyle>(
+  final style = context.knobs.object.dropdown<_FABStyle>(
     label: 'Style',
     options: _FABStyle.values,
     labelBuilder: (s) => s.label,
