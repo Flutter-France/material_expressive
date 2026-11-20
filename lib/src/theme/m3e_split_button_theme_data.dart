@@ -15,8 +15,8 @@ class M3ESplitButtonThemeData with Diagnosticable {
         identical(this, other)
             ? this
             : M3ESplitButtonThemeData(
-              spacing: lerpDouble(spacing, other.spacing, t),
-            ),
+                spacing: lerpDouble(spacing, other.spacing, t),
+              ),
     };
   }
 }

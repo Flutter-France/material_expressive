@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:material_expressive/src/theme/animation_spec.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// Implemented from: https://m3.material.io/styles/motion/overview/specs
 class MotionScheme {
